@@ -41,12 +41,7 @@ class _MyProfileState extends State<MyProfile> {
 
     });
   }
-
-//  Stream<DocumentSnapshot> provideDocumentFieldStream() {
-//    return Firestore.instance
-//        .collection('users').document("6ztvDsMZl4TiYeTjXcYLlNy0YhX2")
-//        .snapshots();
-//  }
+  
   @override
   Widget build(BuildContext context) {
     return SafeArea(
