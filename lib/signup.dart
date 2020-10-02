@@ -16,7 +16,6 @@ class _LoginPageState extends State<SignUpPage> {
   FirebaseAuth _auth = FirebaseAuth.instance;
   FirebaseUser loggedInUser;
   var _isLoading = false;
-
   @override
   void initState(){
     super.initState();
