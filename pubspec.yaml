@@ -26,6 +26,10 @@ dependencies:
   provider: ^3.0.0
   intl: ^0.15.8
   image_picker: ^0.6.7+4
+<<<<<<< HEAD
+  multi_image_picker: ^4.7.14
+=======
+>>>>>>> ae8cc1e0c7adad47f23f1cda33f2ae3b5c1c3d9b
   http: ^0.12.0+2
   get_it: ^3.0.0+1
   provider_architecture: ^1.0.3
@@ -38,6 +42,15 @@ dependencies:
   cached_network_image: ^2.3.1
   timeago: ^2.0.27
   rxdart:
+<<<<<<< HEAD
+  flutter_map:
+  latlong: ^0.6.1
+  carousel_pro: ^1.0.0
+  font_awesome_flutter:
+  nice_button: ^0.1.7
+
+=======
+>>>>>>> ae8cc1e0c7adad47f23f1cda33f2ae3b5c1c3d9b
 
 
   # The following adds the Cupertino Icons font to your application.
@@ -61,9 +74,15 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   assets:
+<<<<<<< HEAD
+    - assets/logo.png
+    - assets/home.jpg
+    - assets/google_logo.png
+=======
     - assets/google_logo.png
     - assets/index.jpg
     - assets/front1.jpeg
+>>>>>>> ae8cc1e0c7adad47f23f1cda33f2ae3b5c1c3d9b
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
