@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+<<<<<<< HEAD
 import 'package:provider/provider.dart';
 import 'package:signup/MyProfileFinal.dart';
 import 'package:signup/models/user.dart';
@@ -15,6 +16,13 @@ import './AppLogic/validation.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'models/AgentUser.dart';
+=======
+import 'package:signup/models/user.dart';
+import './AppLogic/validation.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+
+>>>>>>> ae8cc1e0c7adad47f23f1cda33f2ae3b5c1c3d9b
 
 class AgentSignUp extends StatefulWidget {
   @override
@@ -97,6 +105,7 @@ class _AgentSignUpState extends State<AgentSignUp> {
   // String get getEmail => _email;
 //  AgentUser _agentUser = AgentUser();
 //  OurUser get getAgentUser => _currentUser;
+<<<<<<< HEAD
   String FName, title, Age, Location, PhoneNumber, Email, Description;
   final TextEditingController _firstName = TextEditingController();
   final TextEditingController _lastName = TextEditingController();
@@ -105,11 +114,25 @@ class _AgentSignUpState extends State<AgentSignUp> {
   final TextEditingController _location = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
   final TextEditingController _emailAddress = TextEditingController();
+=======
+  String fName, title, age, location, phoneNumber, email, description;
+  final TextEditingController _firstName = TextEditingController();
+ // final TextEditingController _lastName = TextEditingController();
+  //final TextEditingController _title = TextEditingController();
+  final TextEditingController _age = TextEditingController();
+  final TextEditingController _location = TextEditingController();
+  final TextEditingController _phoneController = TextEditingController();
+ // final TextEditingController _emailAddress = TextEditingController();
+>>>>>>> ae8cc1e0c7adad47f23f1cda33f2ae3b5c1c3d9b
   final TextEditingController _description = TextEditingController();
 
   //final TextEditingController _passwordTextController = TextEditingController();
   //final TextEditingController _confirmPasswordController = TextEditingController();
+<<<<<<< HEAD
   final TextEditingController _role = TextEditingController();
+=======
+  //final TextEditingController _role = TextEditingController();
+>>>>>>> ae8cc1e0c7adad47f23f1cda33f2ae3b5c1c3d9b
   final scaffoldKey = GlobalKey<ScaffoldState>();
   GlobalKey<FormState> _key = new GlobalKey();
   bool _validate = false;
@@ -160,23 +183,41 @@ class _AgentSignUpState extends State<AgentSignUp> {
 //  }
   @override
   Widget build(BuildContext context) {
+<<<<<<< HEAD
     CurrentUser _currentUser = Provider.of<CurrentUser>(context, listen: false);
+=======
+    //CurrentUser _currentUser = Provider.of<CurrentUser>(context, listen: false);
+>>>>>>> ae8cc1e0c7adad47f23f1cda33f2ae3b5c1c3d9b
     return SafeArea(
       child: Scaffold(
         key: scaffoldKey,
         resizeToAvoidBottomPadding: false,
         resizeToAvoidBottomInset: false,
+<<<<<<< HEAD
         backgroundColor: Color(0xfff2f3f7),
+=======
+        //backgroundColor: Color(0xfff2f3f7),
+>>>>>>> ae8cc1e0c7adad47f23f1cda33f2ae3b5c1c3d9b
         body: SingleChildScrollView(
           child: Stack(
             children: <Widget>[
               Container(
+<<<<<<< HEAD
                 height: MediaQuery.of(context).size.height * 1.3,
                 width: MediaQuery.of(context).size.width,
               ),
               Container(
                 color: Colors.grey[800],
                 child: Column(
+=======
+                //height: MediaQuery.of(context).size.height * 1.7,
+                width: MediaQuery.of(context).size.width,
+              ),
+              Container(
+                color: Color(0xff2470c7),
+                child: Column(
+                  //crossAxisAlignment: CrossAxisAlignment.start,
+>>>>>>> ae8cc1e0c7adad47f23f1cda33f2ae3b5c1c3d9b
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     _buildLogo(context),
@@ -221,7 +262,11 @@ class _AgentSignUpState extends State<AgentSignUp> {
           child: Container(
             margin: EdgeInsets.only(bottom: 20),
             //padding: EdgeInsets.only(bottom: 0),
+<<<<<<< HEAD
             height: MediaQuery.of(context).size.height / 0.6,
+=======
+            height: MediaQuery.of(context).size.height / 0.7,
+>>>>>>> ae8cc1e0c7adad47f23f1cda33f2ae3b5c1c3d9b
             width: MediaQuery.of(context).size.width * 0.9,
             decoration: BoxDecoration(
               color: Colors.white,
@@ -287,7 +332,11 @@ class _AgentSignUpState extends State<AgentSignUp> {
                     validator: validateName,
                     keyboardType: TextInputType.text,
                     onSaved: (String val) {
+<<<<<<< HEAD
                       FName = val;
+=======
+                      fName = val;
+>>>>>>> ae8cc1e0c7adad47f23f1cda33f2ae3b5c1c3d9b
                     },
                     autofocus: false,
                     decoration: InputDecoration(
@@ -298,6 +347,7 @@ class _AgentSignUpState extends State<AgentSignUp> {
                         labelText: 'Enter Full Name'),
                   ),
                 ),
+<<<<<<< HEAD
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: TextFormField(
@@ -317,6 +367,27 @@ class _AgentSignUpState extends State<AgentSignUp> {
                         labelText: 'Enter your Title'),
                   ),
                 ),
+=======
+//                Padding(
+//                  padding: const EdgeInsets.all(8.0),
+//                  child: TextFormField(
+//                    maxLines: 1,
+//                    controller: _title,
+//                    keyboardType: TextInputType.text,
+//                    validator: validateTitle,
+//                    onSaved: (String val) {
+//                      title = val;
+//                    },
+//                    autofocus: false,
+//                    decoration: InputDecoration(
+//                        prefixIcon: Icon(
+//                          Icons.title,
+//                          color: Colors.grey[800],
+//                        ),
+//                        labelText: 'Enter your Title'),
+//                  ),
+//                ),
+>>>>>>> ae8cc1e0c7adad47f23f1cda33f2ae3b5c1c3d9b
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: TextFormField(
@@ -414,7 +485,11 @@ class _AgentSignUpState extends State<AgentSignUp> {
                                   Icons.description,
                                   color: Colors.grey[800],
                                 ),
+<<<<<<< HEAD
                                 labelText: 'Your Description:'),
+=======
+                                labelText: 'Your Introduction:'),
+>>>>>>> ae8cc1e0c7adad47f23f1cda33f2ae3b5c1c3d9b
                             //textAlign: TextAlign,
                           ),
 //Center(
@@ -535,7 +610,10 @@ _validate = true;
 
                                 _firestore.collection("users").document(firebaseUser.uid).updateData({
                                   "displayName": _firstName.text,
+<<<<<<< HEAD
                                   "title": _title.text,
+=======
+>>>>>>> ae8cc1e0c7adad47f23f1cda33f2ae3b5c1c3d9b
                                   "age": _age.text,
                                   'phoneNumber' : _phoneController.text,
                                   "address": _location.text,
@@ -544,7 +622,10 @@ _validate = true;
                                 Navigator.pop(context);
                                 _validate = false;
                                 return true;
+<<<<<<< HEAD
                                                               _validate = false;
+=======
+>>>>>>> ae8cc1e0c7adad47f23f1cda33f2ae3b5c1c3d9b
                               }
 
                               Navigator.pop(context);
@@ -637,6 +718,10 @@ _validate = true;
     }
   }
 
+<<<<<<< HEAD
+=======
+  // ignore: missing_return
+>>>>>>> ae8cc1e0c7adad47f23f1cda33f2ae3b5c1c3d9b
   bool _sendToServer() {
     uploadFoodAndImage(
       _imageFile,
