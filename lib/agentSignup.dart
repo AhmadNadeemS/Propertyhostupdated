@@ -4,17 +4,11 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:provider/provider.dart';
-import 'package:signup/MyProfileFinal.dart';
 import 'package:signup/models/user.dart';
-import 'package:signup/random.dart';
-import 'package:signup/root/root.dart';
-import 'package:signup/services/agentDatabase.dart';
-import 'package:signup/states/currentUser.dart';
 import './AppLogic/validation.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'models/AgentUser.dart';
+
 
 class AgentSignUp extends StatefulWidget {
   @override
@@ -97,19 +91,19 @@ class _AgentSignUpState extends State<AgentSignUp> {
   // String get getEmail => _email;
 //  AgentUser _agentUser = AgentUser();
 //  OurUser get getAgentUser => _currentUser;
-  String FName, title, Age, Location, PhoneNumber, Email, Description;
+  String fName, title, age, location, phoneNumber, email, description;
   final TextEditingController _firstName = TextEditingController();
-  final TextEditingController _lastName = TextEditingController();
-  final TextEditingController _title = TextEditingController();
+ // final TextEditingController _lastName = TextEditingController();
+  //final TextEditingController _title = TextEditingController();
   final TextEditingController _age = TextEditingController();
   final TextEditingController _location = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
-  final TextEditingController _emailAddress = TextEditingController();
+ // final TextEditingController _emailAddress = TextEditingController();
   final TextEditingController _description = TextEditingController();
 
   //final TextEditingController _passwordTextController = TextEditingController();
   //final TextEditingController _confirmPasswordController = TextEditingController();
-  final TextEditingController _role = TextEditingController();
+  //final TextEditingController _role = TextEditingController();
   final scaffoldKey = GlobalKey<ScaffoldState>();
   GlobalKey<FormState> _key = new GlobalKey();
   bool _validate = false;
@@ -160,23 +154,24 @@ class _AgentSignUpState extends State<AgentSignUp> {
 //  }
   @override
   Widget build(BuildContext context) {
-    CurrentUser _currentUser = Provider.of<CurrentUser>(context, listen: false);
+    //CurrentUser _currentUser = Provider.of<CurrentUser>(context, listen: false);
     return SafeArea(
       child: Scaffold(
         key: scaffoldKey,
         resizeToAvoidBottomPadding: false,
         resizeToAvoidBottomInset: false,
-        backgroundColor: Color(0xfff2f3f7),
+        //backgroundColor: Color(0xfff2f3f7),
         body: SingleChildScrollView(
           child: Stack(
             children: <Widget>[
               Container(
-                height: MediaQuery.of(context).size.height * 1.3,
+                //height: MediaQuery.of(context).size.height * 1.7,
                 width: MediaQuery.of(context).size.width,
               ),
               Container(
-                color: Colors.grey[800],
+                color: Color(0xff2470c7),
                 child: Column(
+                  //crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     _buildLogo(context),
@@ -221,7 +216,7 @@ class _AgentSignUpState extends State<AgentSignUp> {
           child: Container(
             margin: EdgeInsets.only(bottom: 20),
             //padding: EdgeInsets.only(bottom: 0),
-            height: MediaQuery.of(context).size.height / 0.6,
+            height: MediaQuery.of(context).size.height / 0.7,
             width: MediaQuery.of(context).size.width * 0.9,
             decoration: BoxDecoration(
               color: Colors.white,
@@ -287,7 +282,7 @@ class _AgentSignUpState extends State<AgentSignUp> {
                     validator: validateName,
                     keyboardType: TextInputType.text,
                     onSaved: (String val) {
-                      FName = val;
+                      fName = val;
                     },
                     autofocus: false,
                     decoration: InputDecoration(
@@ -298,25 +293,25 @@ class _AgentSignUpState extends State<AgentSignUp> {
                         labelText: 'Enter Full Name'),
                   ),
                 ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: TextFormField(
-                    maxLines: 1,
-                    controller: _title,
-                    keyboardType: TextInputType.text,
-                    validator: validateTitle,
-                    onSaved: (String val) {
-                      title = val;
-                    },
-                    autofocus: false,
-                    decoration: InputDecoration(
-                        prefixIcon: Icon(
-                          Icons.title,
-                          color: Colors.grey[800],
-                        ),
-                        labelText: 'Enter your Title'),
-                  ),
-                ),
+//                Padding(
+//                  padding: const EdgeInsets.all(8.0),
+//                  child: TextFormField(
+//                    maxLines: 1,
+//                    controller: _title,
+//                    keyboardType: TextInputType.text,
+//                    validator: validateTitle,
+//                    onSaved: (String val) {
+//                      title = val;
+//                    },
+//                    autofocus: false,
+//                    decoration: InputDecoration(
+//                        prefixIcon: Icon(
+//                          Icons.title,
+//                          color: Colors.grey[800],
+//                        ),
+//                        labelText: 'Enter your Title'),
+//                  ),
+//                ),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: TextFormField(
@@ -414,7 +409,7 @@ class _AgentSignUpState extends State<AgentSignUp> {
                                   Icons.description,
                                   color: Colors.grey[800],
                                 ),
-                                labelText: 'Your Description:'),
+                                labelText: 'Your Introduction:'),
                             //textAlign: TextAlign,
                           ),
 //Center(
@@ -535,7 +530,6 @@ _validate = true;
 
                                 _firestore.collection("users").document(firebaseUser.uid).updateData({
                                   "displayName": _firstName.text,
-                                  "title": _title.text,
                                   "age": _age.text,
                                   'phoneNumber' : _phoneController.text,
                                   "address": _location.text,
@@ -544,7 +538,6 @@ _validate = true;
                                 Navigator.pop(context);
                                 _validate = false;
                                 return true;
-                                                              _validate = false;
                               }
 
                               Navigator.pop(context);
@@ -637,6 +630,7 @@ _validate = true;
     }
   }
 
+  // ignore: missing_return
   bool _sendToServer() {
     uploadFoodAndImage(
       _imageFile,
