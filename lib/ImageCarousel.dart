@@ -5,12 +5,14 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import './widgets/TextIcon.dart';
 
 class ImageCarousel extends StatefulWidget {
+  static const routeName = '/ImageCarousel';
   @override
   _ImageCarouselState createState() => _ImageCarouselState();
 }
 
 class _ImageCarouselState extends State<ImageCarousel> {
   @override
+
   Widget build(BuildContext context) {
     Widget imageSliderCarousel = Container(
       height: 200,
@@ -29,7 +31,7 @@ class _ImageCarouselState extends State<ImageCarousel> {
       ),
     );
     createAlertDialog(BuildContext context) {
-      TextEditingController Controller = TextEditingController();
+      TextEditingController controller = TextEditingController();
       return showDialog(
           context: context,
           builder: (context) {
@@ -37,7 +39,7 @@ class _ImageCarouselState extends State<ImageCarousel> {
               title: Text('Enter Your Offer Price'),
               content: TextField(
                 keyboardType: TextInputType.number,
-                controller: Controller
+                controller: controller
               ),
               actions: <Widget>[
                 MaterialButton(
@@ -51,7 +53,7 @@ class _ImageCarouselState extends State<ImageCarousel> {
     }
 
     createContactDialog(BuildContext context) {
-      TextEditingController Controller = TextEditingController();
+      TextEditingController controller = TextEditingController();
       return showDialog(
           context: context,
           builder: (context) {
@@ -61,7 +63,7 @@ class _ImageCarouselState extends State<ImageCarousel> {
                   'faraz@gmail.com\n\n'
                   'or send a message hear'),
               content: TextField(
-                controller: Controller,
+                controller: controller,
               ),
               actions: <Widget>[
                 MaterialButton(
@@ -76,7 +78,23 @@ class _ImageCarouselState extends State<ImageCarousel> {
 
     return Scaffold(
       appBar: AppBar(
+        flexibleSpace: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              //     colors: [Colors.deepPurple, Colors.purple], stops: [0.5, 1.0],
+              colors: [Colors.deepPurple, Color(0xff2470c7)], stops: [0.5, 1.0],
+            ),
+//              gradient: LinearGradient(
+//                  begin: Alignment.bottomRight,
+//                  colors: [
+//                    Colors.black.withOpacity(.4),
+//                    Colors.black.withOpacity(.2),
+//                  ]
+//              ),
+          ),
+        ),
         backgroundColor: Colors.grey[800],
+
         title: Text('Property Host'),
         centerTitle: true,
       ),
@@ -135,6 +153,7 @@ class _ImageCarouselState extends State<ImageCarousel> {
                     'Villa, Islamabad',
                     style: Theme.of(context)
                         .textTheme
+                        // ignore: deprecated_member_use
                         .title
                         .copyWith(fontSize: 24.0),
                   ),
@@ -152,15 +171,16 @@ class _ImageCarouselState extends State<ImageCarousel> {
                       children: <Widget>[
                         TextIcon(
                           icon: FontAwesomeIcons.bed,
-                          text: "Bedroom",
+                          //text: "Bedroom",
+                          text:('${"3"} Bedroom'),
                         ),
                         TextIcon(
                           icon: FontAwesomeIcons.shower,
-                          text: "Bathroom",
+                          text:('${"2"} Bathroom'),
                         ),
                         TextIcon(
                           icon: FontAwesomeIcons.home,
-                          text: "1 Kanal",
+                          text:('${"1"} Kanal'),
                         )
                       ],
                     ),
@@ -179,6 +199,7 @@ class _ImageCarouselState extends State<ImageCarousel> {
                     "Summary",
                     style: Theme.of(context)
                         .textTheme
+                        // ignore: deprecated_member_use
                         .title
                         .copyWith(fontSize: 20),
                   ),
@@ -204,6 +225,7 @@ class _ImageCarouselState extends State<ImageCarousel> {
                         "Details",
                         style: Theme.of(context)
                             .textTheme
+                            // ignore: deprecated_member_use
                             .title
                             .copyWith(fontSize: 20.0),
                       ),
@@ -365,6 +387,7 @@ class _ImageCarouselState extends State<ImageCarousel> {
                         "Main Features",
                         style: Theme.of(context)
                             .textTheme
+                            // ignore: deprecated_member_use
                             .title
                             .copyWith(fontSize: 20.0),
                       ),

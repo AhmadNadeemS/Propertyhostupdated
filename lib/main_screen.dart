@@ -74,6 +74,13 @@ class _MainScreenState extends State<MainScreen> {
            //     colors: [Colors.deepPurple, Colors.purple], stops: [0.5, 1.0],
                 colors: [Colors.deepPurple, Color(0xff2470c7)], stops: [0.5, 1.0],
               ),
+//              gradient: LinearGradient(
+//                  begin: Alignment.bottomRight,
+//                  colors: [
+//                    Colors.black.withOpacity(.4),
+//                    Colors.black.withOpacity(.2),
+//                  ]
+//              ),
             ),
           ),
           //title: Text('Property Host'),
@@ -190,7 +197,7 @@ class _MainScreenState extends State<MainScreen> {
                       ],
                     ),
                     onTap: () {
-                      Navigator.pushNamed(context, '/PostAdd');
+                      Navigator.pushNamed(context, '/postscreen1');
                     },
                   ),
                 ),
@@ -253,7 +260,7 @@ class _MainScreenState extends State<MainScreen> {
                       ],
                     ),
                     onTap: () {
-                      Navigator.pushNamed(context, '/AdsList');
+                      Navigator.pushNamed(context, '/ViewAdds');
                     },
                   ),
                 ),

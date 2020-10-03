@@ -2,7 +2,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:signup/states/currentUser.dart';
 
 class MyProfile extends StatefulWidget {
   final bool isAdmin;
@@ -42,11 +41,7 @@ class _MyProfileState extends State<MyProfile> {
     });
   }
 
-//  Stream<DocumentSnapshot> provideDocumentFieldStream() {
-//    return Firestore.instance
-//        .collection('users').document("6ztvDsMZl4TiYeTjXcYLlNy0YhX2")
-//        .snapshots();
-//  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
