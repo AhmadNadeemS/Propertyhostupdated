@@ -6,41 +6,48 @@ class PostAddFirebase{
 
   final firestoreInstance = Firestore.instance;
 
-void CreatePostAddHomes(String title,String desc, int price, String City,String AvailDays, String time, String unitArea, String location, String purpose,String propertyType,String propertyDeatil,String Buildyear,String ParkingSpace,String Rooms,String bathrooms,String Kitchens,String Floors,String propertySize,List ImageUrls) async{
-  var firebaseUser = await FirebaseAuth.instance.currentUser();
-  firestoreInstance.collection("PostAdd").add(
-      {
-        "Title" : title,
-        "Description" : desc,
-        "Price" : price,
-        "Image Urls":ImageUrls,
-        "Address" : {
-        "location" : location,
-        "city" : City
-      },
+  void CreatePostAddHomes(String title,String desc, int price, String City,String AvailDays, String time, String unitArea, String location, String purpose,String propertyType,String propertyDeatil,String Buildyear,String ParkingSpace,String Rooms,String bathrooms,String Kitchens,String Floors,String propertySize,List ImageUrls) async{
+    var firebaseUser = await FirebaseAuth.instance.currentUser();
+    firestoreInstance.collection("PostAdd").add(
+        {
+          "Title" : title,
+          "Description" : desc,
+          "Price" : price,
+          "Image Urls":ImageUrls,
+          "Address" : {
+            "location" : location,
+            "city" : City
+          },
 
-        "Available Days":AvailDays,
-        "Purpose":purpose,
-        "Property Type":propertyDeatil,
-        "Meeting Time":time,
-        "Unit Area":unitArea,
-        "Property Size":propertySize,
+          "Available Days":AvailDays,
+          "Purpose":purpose,
+          "Property Type":propertyDeatil,
+          "Meeting Time":time,
+          "Unit Area":unitArea,
+          "Property Size":propertySize,
 
-        "Main Features" :{
-          "Build year" : Buildyear,
-          "Parking space" : ParkingSpace,
-          "Rooms":Rooms,
-          "Bathrooms":bathrooms,
-          "kitchens":Kitchens,
-          "Floors":Floors,
-        },
-        "email":firebaseUser.email,
+          "Main Features" :{
+            "Build year" : Buildyear,
+            "Parking space" : ParkingSpace,
+            "Rooms":Rooms,
+            "Bathrooms":bathrooms,
+            "kitchens":Kitchens,
+            "Floors":Floors,
+          },
+          "email":firebaseUser.email,
 
-      }).then((_){
-        print(ImageUrls);
-    print("success new post added in firebase!");
-  });
-}
+        }).then((value){
+      firestoreInstance.collection("PostAdd").document(value.documentID).setData(
+          {
+            "PostID":value.documentID,
+
+          },merge : true).then((_){
+
+        print("success!" + value.documentID);
+      });
+      print("success new post added in firebase!");
+    });
+  }
 
 
 
@@ -76,7 +83,15 @@ void CreatePostAddHomes(String title,String desc, int price, String City,String 
           },
           "email": firebaseUser.email,
 
-        }).then((_) {
+        }).then((value) {
+      firestoreInstance.collection("PostAdd").document(value.documentID).setData(
+          {
+            "PostID":value.documentID,
+
+          },merge : true).then((_){
+
+        print("success!" + value.documentID);
+      });
       print("success new post added in firebase!");
 
     });
@@ -117,18 +132,19 @@ void CreatePostAddHomes(String title,String desc, int price, String City,String 
           },
           "email": firebaseUser.email,
 
-        }).then((_) {
+        }).then((value) {
+      firestoreInstance.collection("PostAdd").document(value.documentID).setData(
+          {
+            "PostID":value.documentID,
+
+          },merge : true).then((_){
+
+        print("success!" + value.documentID);
+      });
       print("success new post added in firebase!");
     });
   }
 
-
-  void RetrievePost() async{
-    var firebaseUser = await FirebaseAuth.instance.currentUser();
-    firestoreInstance.collection("PostAdd").document(firebaseUser.uid).get().then((value){
-      print(value.data);
-    });
-  }
 
 
 }

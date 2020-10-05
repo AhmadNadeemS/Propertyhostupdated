@@ -223,27 +223,27 @@ class _MainScreenState extends State<MainScreen> {
                   ),
                 ),
                 //SizedBox(height: 1.0),
-                Divider(thickness: 0.5,color: Colors.lightBlueAccent,),
-                Center(
-                  child: user != null ? Container(
-                    height: 50,
-                    //color: Colors.grey[800],
-                    child: ListTile(
-                      title: Row(
-                        children: <Widget>[
-                          Icon(Icons.ac_unit,),
-                          Padding(
-                            padding: EdgeInsets.only(left: 8.0),
-                            child: Text("Agent"),
-                          ),
-                        ],
-                      ),
-                      onTap: () {
-                        Navigator.pushNamed(context, '/AgentsList');
-                      },
-                    ),
-                  ): SizedBox.shrink(),
-                ),
+//                Divider(thickness: 0.5,color: Colors.lightBlueAccent,),
+//                Center(
+//                  child: user != null ? Container(
+//                    height: 50,
+//                    //color: Colors.grey[800],
+//                    child: ListTile(
+//                      title: Row(
+//                        children: <Widget>[
+//                          Icon(Icons.ac_unit,),
+//                          Padding(
+//                            padding: EdgeInsets.only(left: 8.0),
+//                            child: Text("Agent"),
+//                          ),
+//                        ],
+//                      ),
+//                      onTap: () {
+//                        Navigator.pushNamed(context, '/AgentsList');
+//                      },
+//                    ),
+//                  ): SizedBox.shrink(),
+              //  ),
                 //SizedBox(height: 1.0),
                 Divider(thickness: 0.5,color: Colors.lightBlueAccent,),
                 Container(
@@ -252,7 +252,7 @@ class _MainScreenState extends State<MainScreen> {
                   child: ListTile(
                     title: Row(
                       children: <Widget>[
-                        Icon(Icons.ac_unit),
+                        Icon(Icons.library_books,color: Colors.green[800],),
                         Padding(
                           padding: EdgeInsets.only(left: 8.0),
                           child: Text("Your Ads"),

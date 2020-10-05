@@ -110,9 +110,10 @@ class _ViewAddsState extends State<ViewAdds> {
                           child: GridTile(
                             child: GestureDetector(
                               onTap: () {
+
                             Navigator.of(context).pushNamed(
                               ImageCarousel.routeName,
-                              //arguments: id,
+                              arguments: snapshot.data.documents[index].documentID.toString(),
                                 );
                               },
                               child: Image.network(

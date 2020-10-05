@@ -18,7 +18,7 @@ class PostSecondScreen extends StatefulWidget{
   String title;String desc; int price; String City;String AvailDays; String time; String unitArea; String location; String purpose,propertySize;
 
 
-  PostSecondScreen(this.title,this.desc,this.price,this.City,this.location,this.purpose,this.unitArea,this.AvailDays,this.time,this.propertySize,{Key key}): super(key: key);
+  PostSecondScreen(this.title ,this.desc,this.price,this.City,this.location,this.purpose,this.unitArea,this.AvailDays,this.time,this.propertySize,{Key key}): super(key: key);
 
 
 
@@ -314,6 +314,7 @@ class _PostSecondScreenState extends State<PostSecondScreen>{
         }
         else {
           createpost.CreatePostAddHomes(
+
               widget.title,
               widget.desc,
               widget.price,
