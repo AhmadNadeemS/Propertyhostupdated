@@ -74,6 +74,20 @@ class _ViewAddsState extends State<ViewAdds> {
           title: Text("Your Ads"),
         ),
         body: user!= null ? Container(
+          height: MediaQuery.of(context).size.height,
+          width: MediaQuery.of(context).size.width,
+//          decoration: BoxDecoration(
+//              gradient: LinearGradient(
+//                  colors: [
+//                    const Color(0xff213A50),
+//                    const Color(0xff071930)
+//                  ],
+//                  begin: FractionalOffset.topRight,
+//                  end: FractionalOffset.bottomLeft)),
+                  decoration: BoxDecoration(
+                      border: Border.all(color: Colors.blueAccent,width: 2.0,)
+
+                  ),
           child: StreamBuilder(
             stream: Firestore.instance.collection('PostAdd').snapshots(),
 
@@ -82,10 +96,10 @@ class _ViewAddsState extends State<ViewAdds> {
               if (snapshot.hasData) {
 
                 return Container(
-                  decoration: BoxDecoration(
-                      border: Border.all(color: Colors.blueAccent,width: 5.0,)
-
-                  ),
+//                  decoration: BoxDecoration(
+//                      border: Border.all(color: Colors.blueAccent,width: 5.0,)
+//
+//                  ),
                   padding: EdgeInsets.all(12),
                   child: GridView.builder(
                     shrinkWrap: true,
@@ -139,18 +153,26 @@ class _ViewAddsState extends State<ViewAdds> {
 //                                fit: BoxFit.cover,
 //                              ),
                             ),
-                            footer: GridTileBar(
-                              backgroundColor: Colors.black87,
+                            footer: Container(
+                              decoration: BoxDecoration(
+                                  gradient: LinearGradient(
+                                      colors: [Colors.white30, Colors.white],
+                                      begin: FractionalOffset.centerRight,
+                                      end: FractionalOffset.centerLeft)),
+                              child: GridTileBar(
+                               // backgroundColor: Colors.black87,
+
 //                          leading: IconButton(
 //                            icon: Icon(Icons.favorite),
 //                            color: Theme.of(context).accentColor,
 //                            onPressed: () {},
 //                          ),
-                              title: Text(
-                                     snapshot.data.documents[index].data['Title'].toString().toUpperCase(),
-                                textAlign: TextAlign.center,
-                                //style: TextStyle(fontStyle: F),
-                              ),
+                                title: Text(
+                                       snapshot.data.documents[index].data['Title'].toString().toUpperCase(),
+                                  textAlign: TextAlign.center,style: TextStyle(  fontSize: 13,
+                                  color: Colors.black54,),
+                                  //style: TextStyle(fontStyle: F),
+                                ),
 //                          trailing: IconButton(
 //                            icon: Icon(
 //                              Icons.shopping_cart,
@@ -158,6 +180,7 @@ class _ViewAddsState extends State<ViewAdds> {
 //                            onPressed: () {},
 //                            color: Theme.of(context).accentColor,
 //                          ),
+                              ),
                             ),
                           ),
                         ),
