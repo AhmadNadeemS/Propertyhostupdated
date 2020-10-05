@@ -171,7 +171,16 @@ class _AgentSignUpState extends State<AgentSignUp> {
                 width: MediaQuery.of(context).size.width,
               ),
               Container(
-                color: Color(0xff2470c7),
+                //color: Color(0xff2470c7),
+                decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                        colors: [
+                          const Color(0xff213A50),
+                          const Color(0xff071930)
+                        ],
+                        begin: FractionalOffset.topRight,
+                        end: FractionalOffset.bottomLeft)),
+
                 child: Column(
                   //crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.center,

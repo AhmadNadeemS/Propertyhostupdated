@@ -51,10 +51,17 @@ class _MyProfileState extends State<MyProfile> {
             flexibleSpace: Container(
               decoration: BoxDecoration(
                 gradient: LinearGradient(
-                 //
-                   colors: [Colors.deepPurple, Color(0xff2470c7)], stops: [0.5, 1.0],
-                  // colors: [Colors.deepPurple, Colors.purple], stops: [0.5, 1.0],
+                    begin: Alignment.bottomRight,
+                    colors: [
+                      Colors.black.withOpacity(.4),
+                      Colors.black.withOpacity(.2),
+                    ]
                 ),
+//                gradient: LinearGradient(
+//                 //
+//                   colors: [Colors.deepPurple, Color(0xff2470c7)], stops: [0.5, 1.0],
+//                  // colors: [Colors.deepPurple, Colors.purple], stops: [0.5, 1.0],
+//                ),
               ),
             ),
           ),

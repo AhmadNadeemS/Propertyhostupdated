@@ -57,18 +57,18 @@ class _ViewAddsState extends State<ViewAdds> {
         appBar: AppBar(
           flexibleSpace: Container(
             decoration: BoxDecoration(
-//              gradient: LinearGradient(
-//                  begin: Alignment.bottomRight,
-//                  colors: [
-//                    Colors.black.withOpacity(.4),
-//                    Colors.black.withOpacity(.2),
-//                  ]
-//              ),
-//
               gradient: LinearGradient(
-                //     colors: [Colors.deepPurple, Colors.purple], stops: [0.5, 1.0],
-                colors: [Colors.deepPurple, Color(0xff2470c7)], stops: [0.5, 1.0],
+                  begin: Alignment.bottomRight,
+                  colors: [
+                    Colors.black.withOpacity(.4),
+                    Colors.black.withOpacity(.2),
+                  ]
               ),
+//
+//              gradient: LinearGradient(
+//                //     colors: [Colors.deepPurple, Colors.purple], stops: [0.5, 1.0],
+//                colors: [Colors.deepPurple, Color(0xff2470c7)], stops: [0.5, 1.0],
+//              ),
             ),
           ),
           title: Text("Your Ads"),
@@ -85,7 +85,7 @@ class _ViewAddsState extends State<ViewAdds> {
 //                  begin: FractionalOffset.topRight,
 //                  end: FractionalOffset.bottomLeft)),
                   decoration: BoxDecoration(
-                      border: Border.all(color: Colors.blueAccent,width: 2.0,)
+                      border: Border.all(color: Colors.blueAccent,width:0.1,)
 
                   ),
           child: StreamBuilder(
@@ -170,7 +170,7 @@ class _ViewAddsState extends State<ViewAdds> {
                                 title: Text(
                                        snapshot.data.documents[index].data['Title'].toString().toUpperCase(),
                                   textAlign: TextAlign.center,style: TextStyle(  fontSize: 13,
-                                  color: Colors.black54,),
+                                  color: Colors.black54,fontFamily: 'Overpass'),
                                   //style: TextStyle(fontStyle: F),
                                 ),
 //                          trailing: IconButton(

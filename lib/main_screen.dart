@@ -66,14 +66,23 @@ class _MainScreenState extends State<MainScreen> {
     return SafeArea(
       child: Scaffold(
         //backgroundColor: Colors.grey,
+        backgroundColor: Color(0xff453658),
         resizeToAvoidBottomPadding: false,
         appBar: AppBar(
           flexibleSpace: Container(
             decoration: BoxDecoration(
-              gradient: LinearGradient(
-           //     colors: [Colors.deepPurple, Colors.purple], stops: [0.5, 1.0],
-                colors: [Colors.deepPurple, Color(0xff2470c7)], stops: [0.5, 1.0],
+                            gradient: LinearGradient(
+                  begin: Alignment.bottomRight,
+                  colors: [
+                    Colors.black.withOpacity(.4),
+                    Colors.black.withOpacity(.2),
+                  ]
               ),
+
+//              gradient: LinearGradient(
+//           //     colors: [Colors.deepPurple, Colors.purple], stops: [0.5, 1.0],
+//                colors: [Colors.deepPurple, Color(0xff2470c7)], stops: [0.5, 1.0],
+//              ),
 //              gradient: LinearGradient(
 //                  begin: Alignment.bottomRight,
 //                  colors: [
