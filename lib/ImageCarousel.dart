@@ -238,7 +238,9 @@ class _ImageCarouselState extends State<ImageCarousel>{
                                       icon: FontAwesomeIcons.home,
                                       text: ('${snapshot
                                           .data.documents
-                                          .elementAt(index)['Unit Area']} Kanal'),
+                                          .elementAt(index)['Property Size']}' " " '${snapshot
+                                          .data.documents
+                                          .elementAt(index)['Unit Area']}'),
                                     ): SizedBox.shrink(),
                                     snapshot
                                         .data.documents.elementAt(index)['Main Features']['Bathrooms']!=null? TextIcon(
