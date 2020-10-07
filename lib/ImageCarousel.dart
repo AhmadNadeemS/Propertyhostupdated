@@ -15,6 +15,7 @@ class ImageCarousel extends StatefulWidget {
 
 class _ImageCarouselState extends State<ImageCarousel>{
   FirebaseUser user;
+  bool _validate = false;
   final FirebaseAuth _auth = FirebaseAuth.instance;
 //  List<NetworkImage> _listOfImages = <NetworkImage>[];
   List<Image> _listOfImages = <Image>[];
@@ -76,29 +77,6 @@ class _ImageCarouselState extends State<ImageCarousel>{
           });
     }
 
-    createContactDialog(BuildContext context) {
-      TextEditingController controller = TextEditingController();
-      return showDialog(
-          context: context,
-          builder: (context) {
-            return AlertDialog(
-              title: Text('Contact information\n\n'
-                  '03365543873\n\n'
-                  'faraz@gmail.com\n\n'
-                  'or send a message hear'),
-              content: TextField(
-                controller: controller,
-              ),
-              actions: <Widget>[
-                MaterialButton(
-                  elevation: 5.0,
-                  child: Text('send'),
-                  onPressed: () {},
-                )
-              ],
-            );
-          });
-    }
 
     return SafeArea(
       child: Scaffold(
@@ -319,7 +297,7 @@ class _ImageCarouselState extends State<ImageCarousel>{
                                           children: <Widget>[
                                             //                             Icon(Icons.schedule,),
                                             Container(
-                                                width: 100,
+                                                width: 70,
                                                 child: Text(
                                                   'Type: ',
                                                   style: TextStyle(
@@ -460,6 +438,7 @@ class _ImageCarouselState extends State<ImageCarousel>{
                           ),
                         ),
                         Container(
+
                           color: Colors.white,
                           margin: const EdgeInsets.symmetric(vertical: 4.0),
                           padding: const EdgeInsets.all(16.0),
@@ -501,7 +480,7 @@ class _ImageCarouselState extends State<ImageCarousel>{
                                             Row(
                                               children: [
                                                 Container(
-                                                    width: 100,
+                                                    width: 70,
                                                     child: Text(
                                                       'Sewarege: ',
                                                       style: TextStyle(
@@ -535,7 +514,7 @@ class _ImageCarouselState extends State<ImageCarousel>{
                                             Row(
                                               children: [
                                                 Container(
-                                                    width: 100,
+                                                    width: 70,
                                                     child: Text(
                                                       'Balloted: ',
                                                       style: TextStyle(
@@ -567,7 +546,7 @@ class _ImageCarouselState extends State<ImageCarousel>{
                                             Row(
                                               children: [
                                                 Container(
-                                                    width: 100,
+                                                    width: 70,
                                                     child: Text(
                                                       'Corner: ',
                                                       style: TextStyle(
@@ -599,7 +578,7 @@ class _ImageCarouselState extends State<ImageCarousel>{
                                             Row(
                                               children: [
                                                 Container(
-                                                    width: 100,
+                                                    width: 70,
                                                     child: Text(
                                                       'Disputed: ',
                                                       style: TextStyle(
@@ -631,7 +610,7 @@ class _ImageCarouselState extends State<ImageCarousel>{
                                             Row(
                                               children: [
                                                 Container(
-                                                    width: 100,
+                                                    width: 70,
                                                     child: Text(
                                                       'Park facing: ',
                                                       style: TextStyle(
@@ -663,7 +642,7 @@ class _ImageCarouselState extends State<ImageCarousel>{
                                             Row(
                                               children: [
                                                 Container(
-                                                    width: 100,
+                                                    width: 70,
                                                     child: Text(
                                                       'Possession: ',
                                                       style: TextStyle(
@@ -695,7 +674,7 @@ class _ImageCarouselState extends State<ImageCarousel>{
                                             Row(
                                               children: [
                                                 Container(
-                                                    width: 100,
+                                                    width: 70,
                                                     child: Text(
                                                       'Sui Gas: ',
                                                       style: TextStyle(
@@ -728,7 +707,7 @@ class _ImageCarouselState extends State<ImageCarousel>{
                                             Row(
                                               children: [
                                                 Container(
-                                                    width: 100,
+                                                    width: 70,
                                                     child: Text(
                                                       'Water Supply: ',
                                                       style: TextStyle(
@@ -758,7 +737,7 @@ class _ImageCarouselState extends State<ImageCarousel>{
                                           children: <Widget>[
                                             //                             Icon(Icons.schedule,),
                                             Container(
-                                                width: 100,
+                                                width: 70,
                                                 child: Text(
                                                   'Built in Year: ',
                                                   style: TextStyle(
@@ -786,7 +765,7 @@ class _ImageCarouselState extends State<ImageCarousel>{
                                           children: <Widget>[
                                             //                             Icon(Icons.schedule,),
                                             Container(
-                                                width: 100,
+                                                width: 70,
                                                 child: Text(
                                                   'Parking Spaces: ',
                                                   style: TextStyle(
@@ -814,7 +793,7 @@ class _ImageCarouselState extends State<ImageCarousel>{
                                           children: <Widget>[
                                             //                             Icon(Icons.schedule,),
                                             Container(
-                                                width: 100,
+                                                width: 70,
                                                 child: Text(
                                                   'Beds: ',
                                                   style: TextStyle(
@@ -842,7 +821,7 @@ class _ImageCarouselState extends State<ImageCarousel>{
                                           children: <Widget>[
                                             //                             Icon(Icons.schedule,),
                                             Container(
-                                                width: 100,
+                                                width: 70,
                                                 child: Text(
                                                   'Bathrooms: ',
                                                   style: TextStyle(
@@ -870,7 +849,7 @@ class _ImageCarouselState extends State<ImageCarousel>{
                                           children: <Widget>[
                                             //                             Icon(Icons.schedule,),
                                             Container(
-                                                width: 100,
+                                                width: 70,
                                                 child: Text(
                                                   'Kitchens: ',
                                                   style: TextStyle(
@@ -898,7 +877,7 @@ class _ImageCarouselState extends State<ImageCarousel>{
                                           children: <Widget>[
                                             //                             Icon(Icons.schedule,),
                                             Container(
-                                                width: 100,
+                                                width: 70,
 
                                                 child: Text(
                                                   'Floors: ',
@@ -1005,7 +984,7 @@ class _ImageCarouselState extends State<ImageCarousel>{
                                           children: <Widget>[
                                             //                             Icon(Icons.schedule,),
                                             Container(
-                                                width: 100,
+                                                width: 70,
 
                                                 child: Text(
                                                   'Flooring: ',
@@ -1034,7 +1013,7 @@ class _ImageCarouselState extends State<ImageCarousel>{
                                           children: <Widget>[
                                             //                             Icon(Icons.schedule,),
                                             Container(
-                                                width: 100,
+                                                width: 70,
 
                                                 child: Text(
                                                   'Waste disposal: ',
@@ -1063,7 +1042,7 @@ class _ImageCarouselState extends State<ImageCarousel>{
                                           children: <Widget>[
                                             //                             Icon(Icons.schedule,),
                                             Container(
-                                                width: 100,
+                                                width: 70,
 
                                                 child: Text(
                                                   'Elevators: ',
@@ -1092,7 +1071,7 @@ class _ImageCarouselState extends State<ImageCarousel>{
                                           children: <Widget>[
                                             //                             Icon(Icons.schedule,),
                                             Container(
-                                                width: 100,
+                                                width: 70,
 
                                                 child: Text(
                                                   'Floors: ',
@@ -1121,7 +1100,7 @@ class _ImageCarouselState extends State<ImageCarousel>{
                                           children: <Widget>[
                                             //                             Icon(Icons.schedule,),
                                             Container(
-                                                width: 100,
+                                                width: 70,
 
                                                 child: Text(
                                                   'Maintenance Staff: ',
@@ -1150,7 +1129,7 @@ class _ImageCarouselState extends State<ImageCarousel>{
                                           children: <Widget>[
                                             //                             Icon(Icons.schedule,),
                                             Container(
-                                                width: 100,
+                                                width: 70,
 
                                                 child: Text(
                                                   'Security Staff: ',
@@ -1178,7 +1157,7 @@ class _ImageCarouselState extends State<ImageCarousel>{
                                           children: <Widget>[
                                             //                             Icon(Icons.schedule,),
                                             Container(
-                                                width: 100,
+                                                width: 70,
                                                 child: Text(
                                                   'Available Days: ',
                                                   style: TextStyle(
@@ -1206,7 +1185,7 @@ class _ImageCarouselState extends State<ImageCarousel>{
                                           children: <Widget>[
                                             //                             Icon(Icons.schedule,),
                                             Container(
-                                                width: 100,
+                                                width: 70,
                                                 child: Text(
                                                   'Meeting Time: ',
                                                   style: TextStyle(
@@ -1319,4 +1298,63 @@ class _ImageCarouselState extends State<ImageCarousel>{
         )   : Center(child: Text("Error")),),
     );
   }
+
+  createContactDialog(BuildContext context)  async {
+    TextEditingController Textcontroller = TextEditingController();
+
+
+    return showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: Text('Contact information\n'
+                'or Type a message'
+            ),
+            content: StatefulBuilder(
+                builder: (BuildContext context, StateSetter setState)  {
+                  return StreamBuilder(
+                      stream:  Firestore.instance.collection("users").where("uid",isEqualTo: user.uid).snapshots(),
+                      builder: (BuildContext context,  snapshot) {
+
+                        if (snapshot.hasData) {
+
+                          return SingleChildScrollView(
+                            child:ListBody(
+                                children: <Widget>[
+                                  Text(snapshot.data.documents[0].data["displayName"].toString()),
+                                  Text(snapshot.data.documents[0].data["email"].toString()),
+                                  Text(snapshot.data.documents[0].data["phoneNumber"].toString()),
+                                  TextField(
+                                    decoration: InputDecoration(
+                                      labelText: 'Enter here:',
+                                      errorText: _validate ? 'Value can,t be empty':null,
+                                      alignLabelWithHint: false,
+                                      filled: false,
+                                    ),
+                                  ),
+                                ]),
+                          );
+                        }else{
+                          return CircularProgressIndicator();
+                        }
+
+
+                      });
+                }),
+            actions: <Widget>[
+              MaterialButton(
+                elevation: 5.0,
+                child: Text('send'),
+                onPressed: () {
+
+
+                },
+              )
+            ],
+          );
+        }
+    );
+  }
+
+
 }

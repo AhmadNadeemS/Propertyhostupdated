@@ -89,7 +89,7 @@ class _ViewAddsState extends State<ViewAdds> {
 
                   ),
           child: StreamBuilder(
-            stream: Firestore.instance.collection('PostAdd').snapshots(),
+            stream: Firestore.instance.collection('PostAdd').where("uid", isEqualTo: user.uid).snapshots(),
 
             builder:
                 (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {

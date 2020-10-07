@@ -2,9 +2,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:signup/ImageCarousel.dart';
 
 import 'package:signup/comments.dart';
-
 
 // ignore: must_be_immutable
 class MyProfileFinal extends StatefulWidget {
@@ -26,12 +26,12 @@ class _MyProfileStateFinal extends State<MyProfileFinal> {
 
   String uid;
 
-
   final String _listings = "Listings";
   final FirebaseAuth _auth = FirebaseAuth.instance;
   bool isAdmin = true;
 
   _MyProfileStateFinal({this.uid});
+
   Future<FirebaseUser> getUser() {
     return _auth.currentUser();
   }
@@ -41,7 +41,7 @@ class _MyProfileStateFinal extends State<MyProfileFinal> {
   @override
   void initState() {
     super.initState();
-   // CurrentUser _current = Provider.of<CurrentUser>(context, listen: false);
+    // CurrentUser _current = Provider.of<CurrentUser>(context, listen: false);
 
     initUser();
   }
@@ -64,6 +64,7 @@ class _MyProfileStateFinal extends State<MyProfileFinal> {
 
     // Size screenSize = MediaQuery.of(context.size;
     final data = ModalRoute.of(context).settings.arguments as String;
+
     //  CurrentUser _current = Provider.of<CurrentUser>(context,listen: false);
     //_current.updateStateFromDatabase(data,_current.getCurrentUser.uid);
 
@@ -76,13 +77,10 @@ class _MyProfileStateFinal extends State<MyProfileFinal> {
             title: Text('My Profile'),
             flexibleSpace: Container(
               decoration: BoxDecoration(
-                gradient: LinearGradient(
-                    begin: Alignment.bottomRight,
-                    colors: [
-                      Colors.black.withOpacity(.4),
-                      Colors.black.withOpacity(.2),
-                    ]
-                ),
+                gradient: LinearGradient(begin: Alignment.bottomRight, colors: [
+                  Colors.black.withOpacity(.4),
+                  Colors.black.withOpacity(.2),
+                ]),
 //                gradient: LinearGradient(
 //                  colors: [Colors.deepPurple, Color(0xff2470c7)],
 //                  stops: [0.5, 1.0],
@@ -220,136 +218,212 @@ class _MyProfileStateFinal extends State<MyProfileFinal> {
                                         ),
                                         // _buildPropertyList(),
                                         Container(
-                                          margin: EdgeInsets.only(top: 15),
-                                          height: 200,
-                                          child: ListView(
-                                            scrollDirection: Axis.horizontal,
-                                            children: <Widget>[
-                                              GestureDetector(
-                                                onTap: () {
-                                                  Navigator.pushNamed(
-                                                      context, '/AdDetail');
-                                                },
-                                                child: Container(
-                                                  width: 160.0,
-                                                  child: Card(
-                                                    child: Wrap(
-                                                      children: <Widget>[
-                                                        Container(
-                                                          height: 140,
-                                                width: double.infinity,
-                                                child: Image.asset(
-                                                  'assets/index.jpg',
+                                            margin: EdgeInsets.only(top: 15),
+                                            height: 160,
+                                            child: StreamBuilder(
+                                                stream: Firestore.instance
+                                                    .collection("PostAdd")
+                                                    .where("uid",
+                                                        isEqualTo: data)
+                                                    .snapshots(),
+                                                builder: (BuildContext context,
+                                                    snapshot) {
+                                                  if (snapshot.hasData) {
+                                                    return ListView.builder(
+                                                       scrollDirection: Axis.horizontal,
+                                                      shrinkWrap: true,
 
-                                                  fit: BoxFit.cover,
-                                                ),
-                                                        ),
-                                                        Container(
-                                                          color: Colors.grey,
-                                                          child: ListTile(
-                                                            title: Text(
-                                                              'heading',
-                                                              style: TextStyle(
-                                                                  fontSize: 16,
-                                                                  color: Colors
-                                                                      .black),
-                                                            ),
+                                                      //physics: NeverScrollableScrollPhysics(),
+//                                                      gridDelegate:
+//                                                          new SliverGridDelegateWithFixedCrossAxisCount(
+//                                                        childAspectRatio: 1.0,
+//                                                        //Padding: EdgeInsets.only(left: 16, right: 16),
+//                                                        crossAxisCount: 2,
+//                                                        crossAxisSpacing: 18,
+//                                                        mainAxisSpacing: 18,
+//                                                      ),
+                                                      itemCount: snapshot.data
+                                                          .documents.length,
+                                                      // ignore: missing_return
+                                                      itemBuilder:
+                                                          (BuildContext context,
+                                                              int index) {
+                                                        //children:
+                                                        return GestureDetector(
+                                                          onTap: () {
+                                                            Navigator.of(context).pushNamed(
+                                                              ImageCarousel.routeName,
+                                                              arguments: snapshot.data.documents[index].documentID.toString(),
+                                                            );
+                                                          },
+                                                          child: Container(
+                                                            width: 160.0,
+                                                            //height: 220,
+                                                            child: Card(
+                                                              child: Wrap(
+                                                                children: <
+                                                                    Widget>[
+                                                                  Container(
+                                                                    height: 110,
+                                                                    width: double
+                                                                        .infinity,
+                                                                    child: Image
+                                                                        .network(
+                                                                      snapshot
+                                                                          .data
+                                                                          .documents[
+                                                                              index]
+                                                                          .data['Image Urls'][0],
+                                                                      loadingBuilder: (BuildContext context,
+                                                                          Widget
+                                                                              child,
+                                                                          ImageChunkEvent
+                                                                              loadingProgress) {
+                                                                        if (loadingProgress ==
+                                                                            null)
+                                                                          return child;
+                                                                        return Center(
+                                                                          child:
+                                                                              CircularProgressIndicator(
+                                                                            value: loadingProgress.expectedTotalBytes != null
+                                                                                ? loadingProgress.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes
+                                                                                : null,
+                                                                          ),
+                                                                        );
+                                                                      },
+                                                                      fit: BoxFit
+                                                                          .cover,
+                                                                    ),
+                                                                  ),
+                                                                  Container(
+                                                                    decoration: BoxDecoration(
+                                                                        gradient: LinearGradient(
+                                                                            colors: [Colors.blue[100], Colors.green[100]],
+                                                                            begin: FractionalOffset.centerRight,
+                                                                            end: FractionalOffset.centerLeft)),
+                                                                    //color: Colors
+                                                                        //.grey,
+                                                                    child:
+                                                                        ListTile(
+                                                                      title:
+                                                                      Container(
+                                                                        margin: EdgeInsets.only(bottom: 12),
+                                                                        child: Text(
+                                                                          snapshot.data.documents[index].data['Title'].toString().toUpperCase(),
+                                                                          textAlign: TextAlign.center,style: TextStyle(  fontSize: 13,
+                                                                            color: Colors.black54,fontFamily: 'Overpass'),
+                                                                          //style: TextStyle(fontStyle: F),
+                                                                        ),
+                                                                      ),
 //                                                      subtitle: Text(
 //                                                        'subHeading',
 //                                                        style: TextStyle(
 //                                                            fontSize: 14, color: Colors.white),
 //                                                      ),
-                                                          ),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
-                                              GestureDetector(
-                                                onTap: () {
-                                                  Navigator.pushNamed(
-                                                      context, '/AdDetail');
-                                                },
-                                                child: Container(
-                                                  width: 160.0,
-                                                  child: Card(
-                                                    child: Wrap(
-                                                      children: <Widget>[
-                                                        Container(
-                                                          height: 140,
-                                                          width: double.infinity,
-                                                          child: Image.asset(
-                                                            'assets/index.jpg',
-
-                                                            fit: BoxFit.cover,
-                                                          ),
-                                                        ),
-                                                        Container(
-                                                          color: Colors.grey,
-                                                          child: ListTile(
-                                                            title: Text(
-                                                              'heading',
-                                                              style: TextStyle(
-                                                                  fontSize: 16,
-                                                                  color: Colors
-                                                                      .black),
+                                                                    ),
+                                                                  ),
+                                                                ],
+                                                              ),
                                                             ),
-//                                                      subtitle: Text(
-//                                                        'subHeading',
-//                                                        style: TextStyle(
-//                                                            fontSize: 14, color: Colors.white),
-//                                                      ),
                                                           ),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),       GestureDetector(
-                                                onTap: () {
-                                                  Navigator.pushNamed(
-                                                      context, '/AdDetail');
-                                                },
-                                                child: Container(
-                                                  width: 160.0,
-                                                  child: Card(
-                                                    child: Wrap(
-                                                      children: <Widget>[
-                                                        Container(
-                                                          height: 140,
-                                                          width: double.infinity,
-                                                          child: Image.asset(
-                                                            'assets/index.jpg',
+                                                        );
+//        GestureDetector(
+//          onTap: () {
+//            Navigator.pushNamed(
+//                context, '/AdDetail');
+//          },
+//          child: Container(
+//            width: 160.0,
+//            child: Card(
+//              child: Wrap(
+//                children: <Widget>[
+//                  Container(
+//                    height: 140,
+//                    width: double
+//                        .infinity,
+//                    child: Image
+//                        .asset(
+//                      'assets/index.jpg',
+//
+//                      fit: BoxFit
+//                          .cover,
+//                    ),
+//                  ),
+//                  Container(
+//                    color: Colors
+//                        .grey,
+//                    child: ListTile(
+//                      title: Text(
+//                        'heading',
+//                        style: TextStyle(
+//                            fontSize: 16,
+//                            color: Colors
+//                                .black),
+//                      ),
+////                                                      subtitle: Text(
+////                                                        'subHeading',
+////                                                        style: TextStyle(
+////                                                            fontSize: 14, color: Colors.white),
+////                                                      ),
+//                    ),
+//                  ),
+//                ],
+//              ),
+//            ),
+//          ),
+//        ), GestureDetector(
+//        onTap: () {
+//          Navigator.pushNamed(
+//              context, '/AdDetail');
+//        },
+//        child: Container(
+//          width: 160.0,
+//          child: Card(
+//            child: Wrap(
+//              children: <Widget>[
+//                Container(
+//                  height: 140,
+//                  width: double
+//                      .infinity,
+//                  child: Image
+//                      .asset(
+//                    'assets/index.jpg',
+//
+//                    fit: BoxFit
+//                        .cover,
+//                  ),
+//                ),
+//                Container(
+//                  color: Colors
+//                      .grey,
+//                  child: ListTile(
+//                    title: Text(
+//                      'heading',
+//                      style: TextStyle(
+//                          fontSize: 16,
+//                          color: Colors
+//                              .black),
+//                    ),
+////                                                      subtitle: Text(
+////                                                        'subHeading',
+////                                                        style: TextStyle(
+////                                                            fontSize: 14, color: Colors.white),
+////                                                      ),
+//                  ),
+//                ),
+//              ],
+//            ),
+//          ),
+//        ),
+//      ),
+                                                      },
+                                                    );
+                                                  } else {
+                                                    return CircularProgressIndicator();
+                                                  }
+                                                } //builder
 
-                                                            fit: BoxFit.cover,
-                                                          ),
-                                                        ),
-                                                        Container(
-                                                          color: Colors.grey,
-                                                          child: ListTile(
-                                                            title: Text(
-                                                              'heading',
-                                                              style: TextStyle(
-                                                                  fontSize: 16,
-                                                                  color: Colors
-                                                                      .black),
-                                                            ),
-//                                                      subtitle: Text(
-//                                                        'subHeading',
-//                                                        style: TextStyle(
-//                                                            fontSize: 14, color: Colors.white),
-//                                                      ),
-                                                          ),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
+                                                )),
                                         //   _showReviewForm(),
                                         Container(
                                           margin: EdgeInsets.only(top: 30),
@@ -533,9 +607,12 @@ class _MyProfileStateFinal extends State<MyProfileFinal> {
                                                           child: Text(
                                                             'Age: ',
                                                             style: TextStyle(
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .bold,color: Colors.black54,),
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
+                                                              color: Colors
+                                                                  .black54,
+                                                            ),
                                                           )),
                                                       SizedBox(
                                                         width: 50,
@@ -568,9 +645,12 @@ class _MyProfileStateFinal extends State<MyProfileFinal> {
                                                           child: Text(
                                                             'Address: ',
                                                             style: TextStyle(
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .bold,color: Colors.black54,),
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
+                                                              color: Colors
+                                                                  .black54,
+                                                            ),
                                                           )),
                                                       SizedBox(
                                                         width: 50,
@@ -619,9 +699,12 @@ class _MyProfileStateFinal extends State<MyProfileFinal> {
                                                           child: Text(
                                                             'Cell No: ',
                                                             style: TextStyle(
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .bold,color: Colors.black54,),
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
+                                                              color: Colors
+                                                                  .black54,
+                                                            ),
                                                           )),
                                                       SizedBox(
                                                         width: 50,
