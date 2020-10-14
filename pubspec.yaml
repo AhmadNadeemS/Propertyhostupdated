@@ -72,6 +72,7 @@ flutter:
     - assets/index.jpg
     - assets/front1.jpeg
 
+
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
 
@@ -90,6 +91,9 @@ flutter:
     - family: OverpassRegular
       fonts:
         - asset: assets/fonts/overpass_regular.otf
+    - family: Varela
+      fonts:
+        - asset: assets/fonts/VarelaRound-Regular.ttf
 
   # fonts:
   #   - family: Schyler
