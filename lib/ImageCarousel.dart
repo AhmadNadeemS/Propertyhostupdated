@@ -1208,7 +1208,10 @@ class _ImageCarouselState extends State<ImageCarousel>{
                             ],
                           ),
                         ),
-                        Row(
+                        user.uid !=
+                            snapshot.data.documents
+                                .elementAt(index)['uid']
+                            ?          Row(
                           children: <Widget>[
                             Padding(
                               padding: const EdgeInsets.all(8.0),
@@ -1268,7 +1271,7 @@ class _ImageCarouselState extends State<ImageCarousel>{
                               ),
                             ),
                           ],
-                        ),
+                        ):Container(),
 //                        Padding(
 //                          padding: const EdgeInsets.only(top: 15, left: 5),
 //                          child: Text(
