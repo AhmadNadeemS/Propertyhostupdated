@@ -6,6 +6,7 @@ import 'package:signup/MyProfileFinal.dart';
 import 'package:signup/PostDetail.dart';
 import 'package:signup/activity_feed.dart';
 import 'package:signup/agentSignup.dart';
+import 'package:signup/chat/chatrooms.dart';
 import 'package:signup/choseOnMap.dart';
 import 'package:signup/MainScreenUsers.dart';
 import 'package:signup/MyProfileFinal.dart';
@@ -14,6 +15,7 @@ import 'package:signup/agentSignup.dart';
 //import 'package:signup/create_post_view.dart';
 import 'package:signup/forgetPassword.dart';
 import 'package:signup/home.dart';
+
 import 'package:signup/main_screen.dart';
 import 'package:signup/myProfile.dart';
 import 'package:signup/postAdd.dart';
@@ -70,6 +72,7 @@ class HomePage extends StatelessWidget {
           '/ImageCarousel': (context) => ImageCarousel(),
           '/AgentSignup': (context) => AgentSignUp(),
           '/ForgetPassword': (context) => ForgetPassword(),
+          '/ChatRoom': (context) => ChatRoom(),
 
         },
       ),

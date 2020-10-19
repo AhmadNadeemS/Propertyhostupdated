@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:signup/Arguments.dart';
 import 'package:signup/ImageCarousel.dart';
 
 import 'package:signup/comments.dart';
@@ -227,8 +228,8 @@ class _MyProfileStateFinal extends State<MyProfileFinal> {
                                                         isEqualTo: data)
                                                     .snapshots(),
                                                 builder: (BuildContext context,
-                                                    snapshot) {
-                                                  if (snapshot.hasData) {
+                                                    snapshot1) {
+                                                  if (snapshot1.hasData) {
                                                     return ListView.builder(
                                                        scrollDirection: Axis.horizontal,
                                                       shrinkWrap: true,
@@ -242,19 +243,22 @@ class _MyProfileStateFinal extends State<MyProfileFinal> {
 //                                                        crossAxisSpacing: 18,
 //                                                        mainAxisSpacing: 18,
 //                                                      ),
-                                                      itemCount: snapshot.data
+                                                      itemCount: snapshot1.data
                                                           .documents.length,
                                                       // ignore: missing_return
                                                       itemBuilder:
                                                           (BuildContext context,
                                                               int index) {
                                                         //children:
-                                                        return GestureDetector(
-                                                          onTap: () {
-                                                            Navigator.of(context).pushNamed(
-                                                              ImageCarousel.routeName,
-                                                              arguments: snapshot.data.documents[index].documentID.toString(),
-                                                            );
+                                                            return GestureDetector(
+                                                              onTap: () {
+                                                                Navigator.of(
+                                                                    context)
+                                                                    .pushNamed(
+                                                                    ImageCarousel
+                                                                        .routeName,
+                                                                    arguments: ScreenArguments(snapshot1.data.documents[index].documentID.toString(),snapshot1.data.documents[index].data['uid'].toString())
+                                                                );
                                                           },
                                                           child: Container(
                                                             width: 160.0,
@@ -269,7 +273,7 @@ class _MyProfileStateFinal extends State<MyProfileFinal> {
                                                                         .infinity,
                                                                     child: Image
                                                                         .network(
-                                                                      snapshot
+                                                                      snapshot1
                                                                           .data
                                                                           .documents[
                                                                               index]
@@ -309,7 +313,7 @@ class _MyProfileStateFinal extends State<MyProfileFinal> {
                                                                       Container(
                                                                         margin: EdgeInsets.only(bottom: 12),
                                                                         child: Text(
-                                                                          snapshot.data.documents[index].data['Title'].toString().toUpperCase(),
+                                                                          snapshot1.data.documents[index].data['Title'].toString().toUpperCase(),
                                                                           textAlign: TextAlign.center,style: TextStyle(  fontSize: 13,
                                                                             color: Colors.black54,fontFamily: 'Overpass'),
                                                                           //style: TextStyle(fontStyle: F),

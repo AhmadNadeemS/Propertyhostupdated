@@ -5,10 +5,11 @@ import 'package:signup/MainScreenUsers.dart';
 import 'package:signup/main_screen.dart';
 import 'package:signup/signup.dart';
 
+import 'helper/helperfunctions.dart';
+
 class RoleCheck extends StatefulWidget {
   @override
   _RoleCheckState createState() => _RoleCheckState();
-
 }
 
 class _RoleCheckState extends State<RoleCheck> {
@@ -17,21 +18,16 @@ class _RoleCheckState extends State<RoleCheck> {
   bool isAdmin = false;
 
   Future<FirebaseUser> getUser() {
-
     return _auth.currentUser();
-
   }
 
   FirebaseUser user;
 
   @override
-
   void initState() {
-
     super.initState();
 
     initUser();
-
   }
 
   initUser() async {
@@ -44,55 +40,50 @@ class _RoleCheckState extends State<RoleCheck> {
     return Scaffold(
 //        appBar: AppBar(title: Text('Home ${user.email}'),),
 
-    body: user != null  ? Container(
+      body: user != null
+          ? Container(
+          child: StreamBuilder<DocumentSnapshot>(
+              stream: Firestore.instance
+                  .collection('users')
+                  .document(user.uid)
+                  .snapshots(),
+              builder: (BuildContext context,
+                  AsyncSnapshot<DocumentSnapshot> snapshot) {
 
-    child: StreamBuilder<DocumentSnapshot>(
+                HelperFunctions.saveUserLoggedInSharedPreference(true);
+                HelperFunctions.saveUserNameSharedPreference(snapshot.data["displayName"]);
+                HelperFunctions.saveUserEmailSharedPreference(snapshot.data["email"]);
 
-    stream: Firestore.instance.collection('users').document(user.uid).snapshots(),
+                if (snapshot.hasError) {
+                  return Text('Error: ${snapshot.hasError}');
+                }
 
-    builder: (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
+                print(user.uid);
 
-    if (snapshot.hasError) {
-
-    return Text('Error: ${snapshot.hasError}');
-
-    }
-
-    print(user.uid);
-
-    return snapshot.hasData
-
-    ? _checkRole(snapshot.data)
-
-        : Text('No Data');
-
-    })
-    )
-
-        : Center(child: Text("Error")),
+                return snapshot.hasData ? _checkRole(snapshot.data) : Text('No Data');
+              }))
+          : Center(child: Text("Error")),
     );
-
   }
 
-_checkRole(DocumentSnapshot snapshot) {
+  _checkRole(DocumentSnapshot snapshot) {
 
     if (snapshot.data['role'] == 'admin') {
-
       //isAdmin =true;
       print('admin');
       //MainScreen(isAdmin: true,);
-      return MainScreen(isAdmin: true,);
+      return MainScreen(
+        isAdmin: true,
+      );
       //return MainScreen(isAdmin);
 
     } else {
-     //isAdmin= false;
+      //isAdmin= false;
       print('other');
       //return MainScreen();
-     return MainScreen(isAdmin: false,);
-
+      return MainScreen(
+        isAdmin: false,
+      );
     }
-
   }
 }
-
-

@@ -181,6 +181,8 @@ class CurrentUser extends ChangeNotifier{
     return retVal;
   }
 
+
+
 //  Future<String> signUpAgent(String email, String password, String firstName,String title,String location,String age, String description, String phoneNumber,String role) async {
 //    String retVal = "error";
 //    AgentUser _user = AgentUser();

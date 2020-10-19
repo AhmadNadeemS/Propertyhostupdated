@@ -31,11 +31,22 @@ class _MainScreenState extends State<MainScreen> {
    user = await _auth.currentUser();
     return user != null ? user.uid : null;
   }
+//  Future<FirebaseUser> signInAnon() async{
+//    AuthResult _authResult = await _auth.signInAnonymously();
+//    FirebaseUser user =_authResult.user;
+//    print('Signed In:${user.uid}');
+//    return user;
+//  }
   FirebaseUser user;
+
   @override
   void initState() {
-    super.initState();
 
+    super.initState();
+//    signInAnon().then((FirebaseUser user){
+//      print('Login Success');
+//      print('UID:'+user.uid);
+//    });
     initUser();
 
   }
@@ -210,6 +221,44 @@ class _MainScreenState extends State<MainScreen> {
                     },
                   ),
                 ),
+                Container(
+                  height: 50,
+                  //color: Colors.white.withAlpha(128),
+                  // color: Colors.grey[800],
+                  child: ListTile(
+                    title: Row(
+                      children: <Widget>[
+                        Icon(Icons.add_box,color: Colors.green[800],),
+                        Padding(
+                          padding: EdgeInsets.only(left: 8.0),
+                          child: Text("Messages"),
+                        ),
+                      ],
+                    ),
+                    onTap: () {
+                      Navigator.pushNamed(context, '/ChatRoom');
+                    },
+                  ),
+                ),
+//                Container(
+//                  height: 50,
+//                  //color: Colors.white.withAlpha(128),
+//                  // color: Colors.grey[800],
+//                  child: ListTile(
+//                    title: Row(
+//                      children: <Widget>[
+//                        Icon(Icons.add_box,color: Colors.green[800],),
+//                        Padding(
+//                          padding: EdgeInsets.only(left: 8.0),
+//                          child: Text("Animation"),
+//                        ),
+//                      ],
+//                    ),
+//                    onTap: () {
+//                      Navigator.pushNamed(context, '/animation');
+//                    },
+//                  ),
+//                ),
                 //SizedBox(height: 1.0),
                 // ignore: unrelated_type_equality_checks
    Divider(thickness: 0.5,color: Colors.lightBlueAccent,),

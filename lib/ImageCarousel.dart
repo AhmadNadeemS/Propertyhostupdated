@@ -4,7 +4,12 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:signup/Arguments.dart';
+import 'package:signup/services/chatDatabase.dart';
 import './widgets/TextIcon.dart';
+import 'chat/chat.dart';
+import 'helper/constants.dart';
+import 'helper/helperfunctions.dart';
 
 class ImageCarousel extends StatefulWidget {
   static const routeName = '/ImageCarousel';
@@ -14,12 +19,16 @@ class ImageCarousel extends StatefulWidget {
 }
 
 class _ImageCarouselState extends State<ImageCarousel>{
+
+
   FirebaseUser user;
   bool _validate = false;
   final FirebaseAuth _auth = FirebaseAuth.instance;
 //  List<NetworkImage> _listOfImages = <NetworkImage>[];
+
   List<Image> _listOfImages = <Image>[];
   bool isLoading = false;
+  chatdatabase Chatdatabase = new chatdatabase();
 
   @override
   void initState() {
@@ -33,13 +42,14 @@ class _ImageCarouselState extends State<ImageCarousel>{
 
   initUser() async {
     user = await _auth.currentUser();
+    Constants.myName = await HelperFunctions.getUserNameSharedPreference();
     setState(() {});
   }
 
   @override
   Widget build(BuildContext context) {
 
-    final String PostId = ModalRoute.of(context).settings.arguments;
+    final ScreenArguments args = ModalRoute.of(context).settings.arguments;
 //
 //    Widget imageSliderCarousel = Container(
 //      height: 200,
@@ -77,20 +87,108 @@ class _ImageCarouselState extends State<ImageCarousel>{
           });
     }
 
+    createContactDialog(BuildContext context)  async {
+      TextEditingController Textcontroller = TextEditingController();
+      String userName;
+
+
+      return showDialog(
+          context: context,
+          builder: (context) {
+            return AlertDialog(
+              title: Text('Contact information\n'
+                  'or Send a message'
+              ),
+              content: StatefulBuilder(
+                  builder: (BuildContext context, StateSetter setState)  {
+                    return StreamBuilder(
+                        stream:  Firestore.instance.collection("users").where("uid",isEqualTo: args.userId).snapshots(),
+                        builder: (BuildContext context,  snapshot) {
+
+                          if (snapshot.hasData) {
+
+                            return SingleChildScrollView(
+                              child:ListBody(
+                                  children: <Widget>[
+                                    Text( userName = snapshot.data.documents[0].data["displayName"].toString()),
+                                    Text(snapshot.data.documents[0].data["email"].toString()),
+                                    Text(snapshot.data.documents[0].data["phoneNumber"].toString()),
+
+                                    FlatButton(
+                                      onPressed: () {
+                                        //  print(userName);
+                                        sendMessage(userName);
+                                      },
+                                      child: Container(
+                                        height: 50,
+                                        width: 80,
+                                        alignment: Alignment.centerRight,
+                                        margin: EdgeInsets.only(left: 0),
+                                        decoration: BoxDecoration(color: Colors.grey[800],border: Border.all(
+                                            width: 1.0
+                                        ),
+                                          borderRadius: BorderRadius.all(
+                                              Radius.circular(5.0)
+                                          ),),
+                                        child: Center(
+                                          child: Text(
+                                            "Message",
+                                            style: TextStyle(
+                                                color: Colors.white,
+                                                fontWeight: FontWeight.bold,fontSize: 12),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+
+
+                                    /* TextField(
+                                      controller: Textcontroller,
+                                      decoration: InputDecoration(
+                                        labelText: 'Enter here:',
+                                        errorText: _validate ? 'Value can,t be empty':null,
+                                        alignLabelWithHint: false,
+                                        filled: false,
+                                      ),
+                                    )*/
+                                  ]),
+                            );
+                          }else{
+                            return CircularProgressIndicator();
+                          }
+
+
+                        });
+                  }),
+              /*actions: <Widget>[
+                MaterialButton(
+                  elevation: 5.0,
+                  child: Text('send'),
+                  onPressed: () {
+                            sendMessage(userName);
+
+                  },
+                )
+              ]*/
+            );
+          }
+      );
+    }
+
 
     return SafeArea(
       child: Scaffold(
-      //  backgroundColor: Colors.blue[800],
-          appBar: AppBar(
-            flexibleSpace: Container(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                    begin: Alignment.bottomRight,
-                    colors: [
-                      Colors.black.withOpacity(.4),
-                      Colors.black.withOpacity(.2),
-                    ]
-                ),
+        //  backgroundColor: Colors.blue[800],
+        appBar: AppBar(
+          flexibleSpace: Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                  begin: Alignment.bottomRight,
+                  colors: [
+                    Colors.black.withOpacity(.4),
+                    Colors.black.withOpacity(.2),
+                  ]
+              ),
 //                gradient: LinearGradient(
 //                  //     colors: [Colors.deepPurple, Colors.purple], stops: [0.5, 1.0],
 //                  colors: [Colors.deepPurple, Color(0xff2470c7)],
@@ -103,17 +201,17 @@ class _ImageCarouselState extends State<ImageCarousel>{
 //                    Colors.black.withOpacity(.2),
 //                  ]
 //              ),
-              ),
             ),
-            //backgroundColor: Colors.grey[800],
-            title: Text("Ad Details"),
-            centerTitle: true,
           ),
+          //backgroundColor: Colors.grey[800],
+          title: Text("Ad Details"),
+          centerTitle: true,
+        ),
         body: user != null ? Container(
           child:
-            //stream: Firestore.instance.collection('PostAdd').document(Pos)
-            StreamBuilder(
-              stream: Firestore.instance.collection('PostAdd').where("PostID",isEqualTo: PostId).snapshots(),            //stream: Firestore.instance.collection('PostAdd').document(PostId).snapshots(),
+          //stream: Firestore.instance.collection('PostAdd').document(Pos)
+          StreamBuilder(
+            stream: Firestore.instance.collection('PostAdd').where("PostID",isEqualTo: args.PostId).snapshots(),            //stream: Firestore.instance.collection('PostAdd').document(PostId).snapshots(),
             //stream: Firestore.instance.collection('PostAdd').where("uid", isEqualTo: Firestore.instance.collection("PostAdd").document('uid').collection(PostId)).snapshots;
             //stream: Firestore.instance.collection('PostAdd').document("uid").collection(PostId).snapshots(),
             builder:
@@ -133,7 +231,7 @@ class _ImageCarouselState extends State<ImageCarousel>{
                     {
                       _listOfImages.add(Image.network(snapshot
                           .data.documents[index].data['Image Urls'][i],
-                       // snapshot.data.documents[index].data['Image Urls'][0],
+                        // snapshot.data.documents[index].data['Image Urls'][0],
                         //'https://previews.123rf.com/images/blueringmedia/blueringmedia1701/blueringmedia170100692/69125003-colorful-kite-flying-in-blue-sky-illustration.jpg',
                         loadingBuilder: (BuildContext context, Widget child,
                             ImageChunkEvent loadingProgress) {
@@ -157,23 +255,23 @@ class _ImageCarouselState extends State<ImageCarousel>{
 
                       children: <Widget>[
 
-                      Center(
-                        child: Container(
-                        height: 200,
-                        child: Center(
-                          child: Carousel(
-                            boxFit: BoxFit.fill,
-                            images:
-                            _listOfImages,
-                            autoplay: false,
-                            indicatorBgPadding: 1.0,
-                            dotSize: 4.0,
-                            dotColor: Colors.blue,
-                            dotBgColor: Colors.transparent,
+                        Center(
+                          child: Container(
+                            height: 200,
+                            child: Center(
+                              child: Carousel(
+                                boxFit: BoxFit.fill,
+                                images:
+                                _listOfImages,
+                                autoplay: false,
+                                indicatorBgPadding: 1.0,
+                                dotSize: 4.0,
+                                dotColor: Colors.blue,
+                                dotBgColor: Colors.transparent,
+                              ),
+                            ),
                           ),
                         ),
-                    ),
-                      ),
                         Container(
                           color: Colors.white,
                           padding: const EdgeInsets.all(16),
@@ -252,9 +350,9 @@ class _ImageCarouselState extends State<ImageCarousel>{
                               Padding(
                                 padding: const EdgeInsets.symmetric(vertical: 16.0),
                                 child: Text(
-                                    snapshot
-                                        .data.documents
-                                        .elementAt(index)['Description'],style: TextStyle(color: Colors.grey),),
+                                  snapshot
+                                      .data.documents
+                                      .elementAt(index)['Description'],style: TextStyle(color: Colors.grey),),
                               ),
                             ],
                           ),
@@ -426,7 +524,7 @@ class _ImageCarouselState extends State<ImageCarousel>{
 
                                             Text(   snapshot
                                                 .data.documents
-                                                .elementAt(index)['Property Size']),
+                                                .elementAt(index)['Purpose']),
                                           ],
                                         ),
                                       ),
@@ -492,8 +590,8 @@ class _ImageCarouselState extends State<ImageCarousel>{
                                               width: 50,
                                             ),
 
-                                        Text(   snapshot
-                                            .data.documents.elementAt(index)['Main Features']['Sewarege'].toString()),
+                                            Text(   snapshot
+                                                .data.documents.elementAt(index)['Main Features']['Sewarege'].toString()),
                                           ],
                                         ),
                                       ),
@@ -1208,10 +1306,8 @@ class _ImageCarouselState extends State<ImageCarousel>{
                             ],
                           ),
                         ),
-                        user.uid !=
-                            snapshot.data.documents
-                                .elementAt(index)['uid']
-                            ?          Row(
+                        user.uid != snapshot.data.documents.elementAt(index)['uid']
+                            ?      Row(
                           children: <Widget>[
                             Padding(
                               padding: const EdgeInsets.all(8.0),
@@ -1302,62 +1398,39 @@ class _ImageCarouselState extends State<ImageCarousel>{
     );
   }
 
-  createContactDialog(BuildContext context)  async {
-    TextEditingController Textcontroller = TextEditingController();
 
-
-    return showDialog(
-        context: context,
-        builder: (context) {
-          return AlertDialog(
-            title: Text('Contact information\n'
-                'or Type a message'
-            ),
-            content: StatefulBuilder(
-                builder: (BuildContext context, StateSetter setState)  {
-                  return StreamBuilder(
-                      stream:  Firestore.instance.collection("users").where("uid",isEqualTo: user.uid).snapshots(),
-                      builder: (BuildContext context,  snapshot) {
-
-                        if (snapshot.hasData) {
-
-                          return SingleChildScrollView(
-                            child:ListBody(
-                                children: <Widget>[
-                                  Text(snapshot.data.documents[0].data["displayName"].toString()),
-                                  Text(snapshot.data.documents[0].data["email"].toString()),
-                                  Text(snapshot.data.documents[0].data["phoneNumber"].toString()),
-                                  TextField(
-                                    decoration: InputDecoration(
-                                      labelText: 'Enter here:',
-                                      errorText: _validate ? 'Value can,t be empty':null,
-                                      alignLabelWithHint: false,
-                                      filled: false,
-                                    ),
-                                  ),
-                                ]),
-                          );
-                        }else{
-                          return CircularProgressIndicator();
-                        }
-
-
-                      });
-                }),
-            actions: <Widget>[
-              MaterialButton(
-                elevation: 5.0,
-                child: Text('send'),
-                onPressed: () {
-
-
-                },
-              )
-            ],
-          );
-        }
-    );
+  getChatRoomId(String a, String b) {
+    if (a.substring(0, 1).codeUnitAt(0) > b.substring(0, 1).codeUnitAt(0)) {
+      return "$b\_$a";
+    } else {
+      return "$a\_$b";
+    }
   }
+
+
+  /// 1.create a chatroom, send user to the chatroom, other userdetails
+  sendMessage(String userName){
+    List<String> users = [Constants.myName,userName];
+    String chatRoomId = getChatRoomId(Constants.myName,userName);
+
+    Map<String, dynamic> chatRoom = {
+      "users": users,
+      "chatRoomId" : chatRoomId,
+    };
+
+
+    Chatdatabase.addChatRoom(chatRoom, chatRoomId);
+
+
+    Navigator.push(context, MaterialPageRoute(
+        builder: (context) => Chat(
+          chatRoomId: chatRoomId,
+        )
+    ));
+
+  }
+
+
 
 
 }

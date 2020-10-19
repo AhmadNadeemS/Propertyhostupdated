@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:signup/Arguments.dart';
 import 'package:signup/ImageCarousel.dart';
 import 'package:signup/states/currentUser.dart';
 
@@ -140,7 +141,7 @@ class _ViewAddsState extends State<ViewAdds> with SingleTickerProviderStateMixin
                         //borderRadius: BorderRadius.circular(75.0),
                       ),
                       child: StreamBuilder(
-                        stream: Firestore.instance.collection('PostAdd').where("uid", isEqualTo: user.uid).snapshots(),
+                        stream: Firestore.instance.collection('PostAdd').where("uid", isEqualTo: user.uid).where("Property Type",isEqualTo: 'Plots').snapshots(),
 
                         builder:
                             (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
@@ -187,8 +188,8 @@ class _ViewAddsState extends State<ViewAdds> with SingleTickerProviderStateMixin
                                             onTap: () {
 
                                               Navigator.of(context).pushNamed(
-                                                ImageCarousel.routeName,
-                                                arguments: snapshot.data.documents[index].documentID.toString(),
+                                                  ImageCarousel.routeName,
+                                                  arguments: ScreenArguments(snapshot.data.documents[index].documentID.toString(),"")
                                               );
                                             },
                                             child: Image.network(
@@ -282,7 +283,7 @@ class _ViewAddsState extends State<ViewAdds> with SingleTickerProviderStateMixin
                         borderRadius: BorderRadius.circular(15.0),
                       ),
                       child: StreamBuilder(
-                        stream: Firestore.instance.collection('PostAdd').where("uid", isEqualTo: user.uid).snapshots(),
+                        stream: Firestore.instance.collection('PostAdd').where("uid", isEqualTo: user.uid).where("Property Type",isEqualTo: 'Homes').snapshots(),
 
                         builder:
                             (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
@@ -329,8 +330,8 @@ class _ViewAddsState extends State<ViewAdds> with SingleTickerProviderStateMixin
                                             onTap: () {
 
                                               Navigator.of(context).pushNamed(
-                                                ImageCarousel.routeName,
-                                                arguments: snapshot.data.documents[index].documentID.toString(),
+                                                  ImageCarousel.routeName,
+                                                  arguments: ScreenArguments(snapshot.data.documents[index].documentID.toString(),"")
                                               );
                                             },
                                             child: Image.network(
@@ -424,7 +425,7 @@ class _ViewAddsState extends State<ViewAdds> with SingleTickerProviderStateMixin
                         borderRadius: BorderRadius.circular(15.0),
                       ),
                       child: StreamBuilder(
-                        stream: Firestore.instance.collection('PostAdd').where("uid", isEqualTo: user.uid).snapshots(),
+                        stream: Firestore.instance.collection('PostAdd').where("uid", isEqualTo: user.uid).where("Property Type",isEqualTo: 'Commercial').snapshots(),
 
                         builder:
                             (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
@@ -471,8 +472,8 @@ class _ViewAddsState extends State<ViewAdds> with SingleTickerProviderStateMixin
                                             onTap: () {
 
                                               Navigator.of(context).pushNamed(
-                                                ImageCarousel.routeName,
-                                                arguments: snapshot.data.documents[index].documentID.toString(),
+                                                  ImageCarousel.routeName,
+                                                  arguments: ScreenArguments(snapshot.data.documents[index].documentID.toString(),"")
                                               );
                                             },
                                             child: Image.network(
@@ -541,11 +542,13 @@ class _ViewAddsState extends State<ViewAdds> with SingleTickerProviderStateMixin
                                 },
                               ),
                             );
-                          } else {
-                            return CircularProgressIndicator();
-//              return Center(
-//                child: Text('Loading...'),
-//              );
+
+
+                          }
+
+                          else {
+                            return Center(child: CircularProgressIndicator());
+//
                           }
                         },
                       ),
