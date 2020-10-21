@@ -1,10 +1,14 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_pro/carousel_pro.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:signup/AppLogic/validation.dart';
 import 'package:signup/Arguments.dart';
+import 'package:signup/services/MakeBid.dart';
+import 'package:signup/services/PostAdCreation.dart';
 import 'package:signup/services/chatDatabase.dart';
 import './widgets/TextIcon.dart';
 import 'chat/chat.dart';
@@ -13,14 +17,19 @@ import 'helper/helperfunctions.dart';
 
 class ImageCarousel extends StatefulWidget {
   static const routeName = '/ImageCarousel';
-
   @override
   _ImageCarouselState createState() => _ImageCarouselState();
+//  String name;
+//  double bid;
+//  int number;
+//  ImageCarousel({this.name,this.number,this.bid});
+//
+
 }
 
 class _ImageCarouselState extends State<ImageCarousel>{
 
-
+  final Firestore _firestore = Firestore.instance;
   FirebaseUser user;
   bool _validate = false;
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -29,7 +38,9 @@ class _ImageCarouselState extends State<ImageCarousel>{
   List<Image> _listOfImages = <Image>[];
   bool isLoading = false;
   chatdatabase Chatdatabase = new chatdatabase();
-
+ String postId;
+  String data =
+      "https://thumbs.dreamstime.com/b/user-profile-avatar-icon-134114292.jpg";
   @override
   void initState() {
 
@@ -45,11 +56,16 @@ class _ImageCarouselState extends State<ImageCarousel>{
     Constants.myName = await HelperFunctions.getUserNameSharedPreference();
     setState(() {});
   }
+  String name;
+  double bid;
+  int number;
+  GlobalKey<FormState> _key = new GlobalKey();
+  PostBidFirebase createBid = PostBidFirebase();
 
   @override
   Widget build(BuildContext context) {
-
     final ScreenArguments args = ModalRoute.of(context).settings.arguments;
+    postId = args.PostId;
 //
 //    Widget imageSliderCarousel = Container(
 //      height: 200,
@@ -68,19 +84,119 @@ class _ImageCarouselState extends State<ImageCarousel>{
 //      ),
 //    );
     createAlertDialog(BuildContext context) {
-      TextEditingController controller = TextEditingController();
+      TextEditingController _phoneController = TextEditingController();
+      final TextEditingController _firstName = TextEditingController();
+      final TextEditingController _bid = TextEditingController();
       return showDialog(
           context: context,
           builder: (context) {
+
             return AlertDialog(
               title: Text('Enter Your Offer Price'),
-              content: TextField(
-                  keyboardType: TextInputType.number, controller: controller),
+              content: Form(
+                key: _key,
+                autovalidate: _validate,
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: SingleChildScrollView(
+                    child: Column(
+                      children: [
+                        Container(
+                          child: TextFormField(
+                            controller: _firstName,
+                            keyboardType: TextInputType.text,
+                            validator: validateName,
+                            onSaved: (String val){
+                              name = val;
+                              print(name);
+                            },
+
+                            decoration: InputDecoration(
+                                prefixIcon: Icon(
+                                  Icons.account_circle,
+                                  color: Colors.grey[800],
+                                ),
+                                labelText: 'Enter Full Name'),
+                          ),
+                        ),
+                        Container(
+                          child: TextFormField(
+                            controller: _phoneController,
+                            keyboardType: TextInputType.phone,
+                            maxLength: 11,
+                            validator:validateMobile,
+                            onSaved: (String val){
+                              number = int.parse(val);
+                              print(number);
+                            },
+                            decoration: InputDecoration(
+                                prefixIcon: Icon(
+                                  Icons.phone,
+                                  color: Colors.grey[800],
+                                ),
+                                labelText: 'Phone No'),
+                          ),
+                        ),
+                        Container(
+                          child: TextFormField(
+                            controller: _bid,
+                            keyboardType: TextInputType.phone,
+                         //   maxLength: 11,
+                            validator:validateBid,
+                            onSaved: (String val){
+                             bid = double.parse(val);
+                              print(bid);
+                            },
+                            decoration: InputDecoration(
+                                prefixIcon: Icon(
+                                  Icons.phone,
+                                  color: Colors.grey[800],
+                                ),
+                                labelText: 'Enter Bid'),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
               actions: <Widget>[
                 MaterialButton(
                   elevation: 5.0,
                   child: Text('Make Offer'),
-                  onPressed: () {},
+//                  onPressed: () async {
+//                    _validate = true;
+//                    var firebaseUser = await FirebaseAuth.instance.currentUser();
+//                    if (_sendToServer()) {
+//
+//                      _firestore.collection("BidList").document(firebaseUser.uid).setData({
+ //                       "displayName": _firstName.text,
+//                     //   "age": _age.text,
+//                     //   'phoneNumber' : _phoneController.text,
+//                    //    "address": _location.text,
+//                    //    "description": _description.text,
+//                      });
+//                      Navigator.pop(context);
+//                      _validate = false;
+//                      return true;
+//                    }
+//
+//                    Navigator.pop(context);
+            onPressed: (){
+            _validate = true;
+            if (_sendToServer()) {
+            makesBid(name,number,bid,postId);
+            Navigator.pop(context);
+            _validate = false;
+            return true;
+            }
+            Navigator.pop(context);
+//            else{
+//                      setState(() {
+//                        _validate = true;
+//                      });
+//                    }
+                  },
                 )
               ],
             );
@@ -1306,6 +1422,190 @@ class _ImageCarouselState extends State<ImageCarousel>{
                             ],
                           ),
                         ),
+                        user.uid == snapshot.data.documents.elementAt(index)['uid'] ?
+                        Column(
+                          children: <Widget>[
+                            Container(
+
+                              //width: 320,
+                              height:130,
+                              margin: EdgeInsets.only(left: 14, right: 14, bottom: 10),
+                              padding: EdgeInsets.all(5),
+                              decoration: BoxDecoration(
+                                border: Border.all(
+                                  width: 2,
+                                  color: Colors.black26,
+                                ),
+                                borderRadius: new BorderRadius.only(
+                                  bottomLeft: const Radius.circular(10.0),
+                                  bottomRight: const Radius.circular(10.0),),
+                              ),
+                              child: StreamBuilder(
+                                stream: Firestore.instance.collection('BidList').where('PostID',isEqualTo:args.PostId).snapshots(),
+                                // ignore: missing_return
+                                builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot){
+
+                                  if(snapshot.data.documents.length != 0) {
+                                    return ListView.builder(
+                                        itemCount: snapshot.data.documents
+                                            .length,
+                                        itemBuilder: (BuildContext context,
+                                            int index) {
+                                          return Container(
+
+                                            child: Column(
+                                              children: <Widget>[
+                                                Container(
+                                                  // margin: EdgeInsets.only(top: 30),
+                                                  child: Row(
+                                                    mainAxisAlignment:
+                                                    MainAxisAlignment.center,
+                                                    children: <Widget>[
+                                                      Container(
+                                                        //color: Colors.grey[500],
+                                                        color: Colors.teal[700],
+                                                        width: 300,
+                                                        height: 25,
+                                                        child: Center(
+                                                          child: Text(
+                                                            'Offers List',
+                                                            style: TextStyle(
+                                                                fontSize: 18,
+                                                                fontWeight:
+                                                                FontWeight.bold,
+                                                                color: Colors
+                                                                    .white),
+                                                          ),
+                                                        ),
+                                                      )
+                                                    ],
+                                                  ),
+                                                ),
+                                                ListTile(
+                                                  title: Text(
+                                                    snapshot.data
+                                                        .documents[index]
+                                                        .data['Name']
+                                                        .toString()
+                                                        .toUpperCase(),
+                                                    style: TextStyle(
+                                                        fontSize: 14,
+                                                        color: Colors
+                                                            .black,
+                                                        fontWeight: FontWeight
+                                                            .bold),
+                                                  ),
+                                                  leading: CircleAvatar(
+                                                    //backgroundImage: NetworkImage(w),
+                                                    // backgroundColor: Colors.blueGrey,
+                                                    backgroundImage: CachedNetworkImageProvider(
+                                                        data
+                                                            .toString()),
+                                                  ),
+                                                  // subtitle: Text(username),
+                                                  //subtitle: Text(accountCreated.toString()),
+                                                  subtitle: Row(
+                                                    children: [
+                                                      Text('Number: ',
+                                                        style: TextStyle(
+                                                            fontWeight: FontWeight
+                                                                .bold,
+                                                            fontSize: 10),),
+                                                      Text(
+                                                        snapshot.data
+                                                            .documents[index]
+                                                            .data['Number']
+                                                            .toString()
+                                                            .toUpperCase(),
+                                                        style: TextStyle(
+                                                            fontSize: 12,
+                                                            color: Colors
+                                                                .black45),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  //trailing: Text(timeago.format(timestamp.toDate())),
+                                                  trailing: Container(
+                                                    margin: EdgeInsets.all(10),
+                                                    child: Column(
+                                                      children: [
+                                                        Text('Bid',
+                                                          style: TextStyle(
+                                                              fontWeight: FontWeight
+                                                                  .bold),),
+                                                        Text(
+                                                          snapshot.data
+                                                              .documents[index]
+                                                              .data['Bid']
+                                                              .toString()
+                                                              .toUpperCase(),
+                                                          style: TextStyle(
+                                                              fontSize: 12),),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                ),
+                                                Divider(),
+                                              ],
+                                            ),
+                                          );
+                                        }
+                                    );
+                                  }
+                                  else
+                                    {
+                                      return Container(
+
+                                        child: Column(
+                                          children: <Widget>[
+                                            Container(
+                                              // margin: EdgeInsets.only(top: 30),
+                                              child: Row(
+                                                mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                                children: <Widget>[
+                                                  Container(
+                                                    //color: Colors.grey[500],
+                                                    color: Colors.teal[700],
+                                                    width: 300,
+                                                    height: 30,
+                                                    child: Center(
+                                                      child: Text(
+                                                        'Offers List',
+                                                        style: TextStyle(
+                                                            fontSize: 18,
+                                                            fontWeight:
+                                                            FontWeight.bold,
+                                                            color: Colors.white),
+                                                      ),
+                                                    ),
+                                                  )
+                                                ],
+                                              ),
+                                            ),
+                                            Container(
+                                              margin:EdgeInsets.only(top:7),
+                                              child: Padding(
+                                                padding: const EdgeInsets.all(20.0),
+                                                child: Container(
+
+                                                    child: Center(child: Text('No Offers Yet !',style: TextStyle(fontWeight: FontWeight.bold,fontSize: 18),),)),
+                                              ),
+                                            ),
+                                            Divider(),
+                                          ],
+                                        ),
+                                      );
+                                    }
+                                 // else if(snapshot.hasError || snapshot == null)
+
+//
+                                  }
+                              ),
+                            ),
+                          ],
+                        ):
+                    SizedBox.shrink(),
                         user.uid != snapshot.data.documents.elementAt(index)['uid']
                             ?      Row(
                           children: <Widget>[
@@ -1430,7 +1730,27 @@ class _ImageCarouselState extends State<ImageCarousel>{
 
   }
 
+  void makesBid(String name,int number,double bid,String postId) async{
 
+      createBid.CreateBid(name,number,bid,postId);
+    //showAlert("uploaded successfully");
+    //Navigator.of(context).pop();
 
+  }
+
+bool _sendToServer() {
+
+  if (_key.currentState.validate()) {
+    // No any error in validation
+    _key.currentState.save();
+    return true;
+  } else {
+    // validation error
+    setState(() {
+      _validate = true;
+      return false;
+    });
+  }
+}
 
 }

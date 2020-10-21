@@ -231,7 +231,8 @@ class _MyProfileStateFinal extends State<MyProfileFinal> {
                                                     snapshot1) {
                                                   if (snapshot1.hasData) {
                                                     return ListView.builder(
-                                                       scrollDirection: Axis.horizontal,
+                                                      scrollDirection:
+                                                          Axis.horizontal,
                                                       shrinkWrap: true,
 
                                                       //physics: NeverScrollableScrollPhysics(),
@@ -250,15 +251,25 @@ class _MyProfileStateFinal extends State<MyProfileFinal> {
                                                           (BuildContext context,
                                                               int index) {
                                                         //children:
-                                                            return GestureDetector(
-                                                              onTap: () {
-                                                                Navigator.of(
-                                                                    context)
-                                                                    .pushNamed(
-                                                                    ImageCarousel
-                                                                        .routeName,
-                                                                    arguments: ScreenArguments(snapshot1.data.documents[index].documentID.toString(),snapshot1.data.documents[index].data['uid'].toString())
-                                                                );
+                                                        return GestureDetector(
+                                                          onTap: () {
+                                                            Navigator.of(context).pushNamed(
+                                                                ImageCarousel
+                                                                    .routeName,
+                                                                arguments: ScreenArguments(
+                                                                    snapshot1
+                                                                        .data
+                                                                        .documents[
+                                                                            index]
+                                                                        .documentID
+                                                                        .toString(),
+                                                                    snapshot1
+                                                                        .data
+                                                                        .documents[
+                                                                            index]
+                                                                        .data[
+                                                                            'uid']
+                                                                        .toString()));
                                                           },
                                                           child: Container(
                                                             width: 160.0,
@@ -302,20 +313,38 @@ class _MyProfileStateFinal extends State<MyProfileFinal> {
                                                                   Container(
                                                                     decoration: BoxDecoration(
                                                                         gradient: LinearGradient(
-                                                                            colors: [Colors.blue[100], Colors.green[100]],
-                                                                            begin: FractionalOffset.centerRight,
+                                                                            colors: [
+                                                                          Colors
+                                                                              .blue[100],
+                                                                          Colors
+                                                                              .green[100]
+                                                                        ],
+                                                                            begin:
+                                                                                FractionalOffset.centerRight,
                                                                             end: FractionalOffset.centerLeft)),
                                                                     //color: Colors
-                                                                        //.grey,
+                                                                    //.grey,
                                                                     child:
                                                                         ListTile(
                                                                       title:
-                                                                      Container(
-                                                                        margin: EdgeInsets.only(bottom: 12),
-                                                                        child: Text(
-                                                                          snapshot1.data.documents[index].data['Title'].toString().toUpperCase(),
-                                                                          textAlign: TextAlign.center,style: TextStyle(  fontSize: 13,
-                                                                            color: Colors.black54,fontFamily: 'Overpass'),
+                                                                          Container(
+                                                                        margin: EdgeInsets.only(
+                                                                            bottom:
+                                                                                12),
+                                                                        child:
+                                                                            Text(
+                                                                          snapshot1
+                                                                              .data
+                                                                              .documents[index]
+                                                                              .data['Title']
+                                                                              .toString()
+                                                                              .toUpperCase(),
+                                                                          textAlign:
+                                                                              TextAlign.center,
+                                                                          style: TextStyle(
+                                                                              fontSize: 13,
+                                                                              color: Colors.black54,
+                                                                              fontFamily: 'Overpass'),
                                                                           //style: TextStyle(fontStyle: F),
                                                                         ),
                                                                       ),

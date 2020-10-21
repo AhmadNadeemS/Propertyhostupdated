@@ -121,39 +121,46 @@ class _MainScreenState extends State<MainScreen> {
 
       // ignore: missing_return
       builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-        if (snapshot.data == null)
-          return CircularProgressIndicator();
-        //final userDocument = snapshot.data;
-        //final title=  snapshot.data.userocument['displayName']);
-        //CircularProgressIndicator();
-        return Expanded(
-          child: ListView.builder(
-              itemCount: snapshot.data.documents.length,
-              // ignore: missing_return
-              itemBuilder: (BuildContext context, int index) {
-                String Data= snapshot.data.documents.elementAt(index)['displayName'];
-                String Result = Data.substring(0,Data.lastIndexOf(" "));
-                //var text = Data.substring(Result, Data.lastIndexOf('') - Result);
-                //String ret = Result[0] +""+ Result[1];
-                print(user.uid);
-                return user != null
-                    ? Container(
-                  margin: EdgeInsets.only(top: 19, left: 80),
-                  child: Text(
-                      Result,style: TextStyle(fontWeight: FontWeight.bold,color: Colors.black,fontStyle: FontStyle.italic),),
-                )
-                    : IconButton(
-                  icon: Icon(Icons.person),
-                  // ignore: missing_return
-                  onPressed: () {
-                    Navigator.pushNamed(context, '/LoginScreen');
-                  },
-                );
-              }
-          ),
-        );
-      }
+        if (snapshot.connectionState == ConnectionState.active) {
+          return Expanded(
+            child: ListView.builder(
+                itemCount: snapshot.data.documents.length,
+                // ignore: missing_return
+                itemBuilder: (BuildContext context, int index) {
+                  String Data = snapshot.data.documents.elementAt(
+                      index)['displayName'];
+                  String Result = Data.substring(0, Data.lastIndexOf(" "));
+                  //var text = Data.substring(Result, Data.lastIndexOf('') - Result);
+                  //String ret = Result[0] +""+ Result[1];
+                  print(user.uid);
+                  return user != null
+                      ? Container(
+                    margin: EdgeInsets.only(top: 19, left: 80),
+                    child: Text(
+                      Result, style: TextStyle(fontWeight: FontWeight.bold,
+                        color: Colors.black,
+                        fontStyle: FontStyle.italic),),
+                  )
+                      : IconButton(
+                    icon: Icon(Icons.person),
+                    // ignore: missing_return
+                    onPressed: () {
+                      Navigator.pushNamed(context, '/LoginScreen');
+                    },
+                  );
+                }
+            ),
+          );
+        }
+        else if (snapshot.connectionState == ConnectionState.waiting) {
+          return Container(child: Center(child: CircularProgressIndicator()));
+          //return CircularProgressIndicator();
+          //final userDocument = snapshot.data;
+          //final title=  snapshot.data.userocument['displayName']);
+          //CircularProgressIndicator();
 
+        }
+      }
                   ):IconButton(
                   icon: Icon(Icons.person),
       // ignore: missing_return

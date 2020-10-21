@@ -159,21 +159,6 @@ class _LoginPageState extends State<SignUpPage> {
               ),
 
             ),
-//            TextFormField(
-//              controller: _lastName,
-//              keyboardType: TextInputType.text,
-//              validator: validateName,
-//              onSaved: (String val){
-//                _LName = val;
-//                print(_LName);
-//              },
-//              decoration: InputDecoration(
-//                  prefixIcon: Icon(
-//                    Icons.account_circle,
-//                    color: Colors.grey[800],
-//                  ),
-//                  labelText: 'Enter Last Name'),
-//            ),
             TextFormField(
               controller: _phoneController,
               keyboardType: TextInputType.phone,
@@ -205,41 +190,6 @@ class _LoginPageState extends State<SignUpPage> {
                 labelText: 'Email',
               ),
             ),
-//            TextFormField(
-//              //   controller: passwordController,
-//              keyboardType: TextInputType.text,
-//
-//              obscureText: true,
-//              validator:validatePassword,
-//              onSaved: (String val){
-//                _password = val;
-//              },
-//              decoration: InputDecoration(
-//                prefixIcon: Icon(
-//                  Icons.lock,
-//                  color: Colors.grey[800],
-//                ),
-//                labelText: 'Password',
-//              ),
-//            ),
-//            TextFormField(
-//              //   controller: passwordController,
-//              keyboardType: TextInputType.text,
-//
-//              obscureText: true,
-//              validator:validatePassword,
-//              onSaved: (String val){
-//                _password = val;
-//              },
-//              decoration: InputDecoration(
-//                prefixIcon: Icon(
-//                  Icons.lock,
-//                  color: Colors.grey[800],
-//                ),
-//                labelText: 'Password',
-//              ),
-//            ),
-
             TextFormField(
               controller: _passwordTextController,
               decoration: InputDecoration(
