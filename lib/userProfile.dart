@@ -6,12 +6,14 @@ import 'package:provider/provider.dart';
 import 'package:signup/comments.dart';
 
 class UserProfile extends StatefulWidget {
+  final bool isAgent;
 
+  const UserProfile({Key key, this.isAgent}) : super(key: key);
   //final String data;
   //static const routeName = '/UserProfile';
   //const MyProfileFinal({Key key, this.data}) : super(key: key);
   @override
-  _UserProfileState createState() => _UserProfileState();
+  _UserProfileState createState() => _UserProfileState(this.isAgent);
 }
 
 class _UserProfileState extends State<UserProfile> {
@@ -25,16 +27,19 @@ class _UserProfileState extends State<UserProfile> {
 
   int _rating = 0;
   final FirebaseAuth _auth = FirebaseAuth.instance;
-  bool isAdmin = true;
+
+  bool isAgent = true;
+
+  _UserProfileState(this.isAgent);
 
   //_MyProfileStateFinal(this.data);
 
 
 
   //bool isAdmin = false;
-
-  Future<FirebaseUser> getUser() {
-    return _auth.currentUser();
+  Future<String> currentUser() async {
+    user = await _auth.currentUser();
+    return user != null ? user.uid : null;
   }
 
   FirebaseUser user;
@@ -42,14 +47,24 @@ class _UserProfileState extends State<UserProfile> {
   @override
   void initState() {
     super.initState();
-    //print('${data}');
+
     initUser();
   }
 
+  String userid;
+
   initUser() async {
     user = await _auth.currentUser();
+    if (user != null) {
+      userid = user.uid;
+      print(widget.isAgent);
+    } else {
+      print("user.uid");
+      // User is not available. Do something else
+    }
     setState(() {});
   }
+
   void rate(int rating) {
     //Other actions based on rating such as api calls.
     setState(() {
@@ -71,27 +86,83 @@ class _UserProfileState extends State<UserProfile> {
             title: Text('My Profile'),
             flexibleSpace: Container(
               decoration: BoxDecoration(
-//                gradient: LinearGradient(
-//                    begin: Alignment.bottomRight,
-//                    colors: [
-//                      Colors.black.withOpacity(.4),
-//                      Colors.black.withOpacity(.2),
-//                    ]
-//                ),
-                gradient: LinearGradient(
-                  colors: [Colors.deepPurple, Color(0xff2470c7)],
-                  stops: [0.5, 1.0],
-                ),
+                gradient: LinearGradient(begin: Alignment.bottomRight, colors: [
+                  Colors.black.withOpacity(.4),
+                  Colors.black.withOpacity(.2),
+                ]),
               ),
             ),
             centerTitle: true,
             actions: <Widget>[
-              IconButton(
+
+                Expanded(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: <Widget>[
+                      //Image.asset('assets/index.jpg', fit: BoxFit.cover,height:16,width:16),
+                      Container(
+                          margin: new EdgeInsets.only(left: 130),
+                          child: Text(
+                            'My Profile',
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold, fontSize: 19),
+                          )),
+
+                      user != null
+                          ? StreamBuilder(
+                          stream: Firestore.instance
+                              .collection('users')
+                              .where("uid", isEqualTo: userid)
+                              .snapshots(),
+
+                          // ignore: missing_return
+                          builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+                            if (snapshot.connectionState == ConnectionState.active) {
+                              return Expanded(
+                                child: ListView.builder(
+                                    itemCount: snapshot.data.documents.length,
+                                    // ignore: missing_return
+                                    itemBuilder: (BuildContext context, int index) {
+                                      // String Data = snapshot.data.documents.elementAt(
+                                      //index)['displayName'];
+                                      // String Result = Data.substring(0, Data.lastIndexOf(" "));
+                                      //var text = Data.substring(Result, Data.lastIndexOf('') - Result);
+                                      //String ret = Result[0] +""+ Result[1];
+                                      //print("Error");
+                                      return snapshot
+                                          .data.documents.elementAt(index)['User Type']=="Agent"
+                                          ?
+                                                     IconButton(
                 icon: Icon(Icons.notifications),
                 onPressed: () {
                   Navigator.pushNamed(context, "/activityFeed");
                 },
               )
+                                          : Container();
+                                    }
+                                ),
+                              );
+                            }
+                            else if (snapshot.connectionState == ConnectionState.waiting) {
+                              return Container(child: Center(child: CircularProgressIndicator()));
+                              //return CircularProgressIndicator();
+                              //final userDocument = snapshot.data;
+                              //final title=  snapshot.data.userocument['displayName']);
+                              //CircularProgressIndicator();
+
+                            }
+                          })
+                          : Container(),
+                    ],
+                  ),
+                ),
+
+//               IconButton(
+//                icon: Icon(Icons.notifications),
+//                onPressed: () {
+//                  Navigator.pushNamed(context, "/activityFeed");
+//                },
+//              )
             ],
             backgroundColor: Colors.grey[800],
             elevation: 0.0,
@@ -114,7 +185,9 @@ class _UserProfileState extends State<UserProfile> {
                                   //              _buildProfileImage(),
                                   SizedBox(height: 20.0),
                                   //              _buildProfileImage(),
-                                  Center(
+                                  snapshot
+                                      .data.documents
+                                      .elementAt(index)['image'] !=null ?Center(
                                     child: Container(
                                       width: 100.0,
                                       height: 100.0,
@@ -133,6 +206,23 @@ class _UserProfileState extends State<UserProfile> {
                                         ),
                                       ),
                                     ),
+                                  ):Container(
+
+                                    width: 100,
+                                    height: 90,
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(100),
+                                      border: Border.all(
+                                        color: Colors.white,
+                                        width: 6.0,
+                                      ),
+                                    ),
+                                    child: ClipRRect(
+                                        borderRadius: BorderRadius.circular(80),
+                                        child: Image.network("https://thumbs.dreamstime.com/b/user-profile-avatar-icon-134114292.jpg",
+                                            width: 80,
+                                            height: 80,
+                                            fit: BoxFit.fill)),
                                   ),
                                   //_buildFullName(),
                                   Text(
@@ -167,7 +257,8 @@ class _UserProfileState extends State<UserProfile> {
 //                                ),
                                   SizedBox(height: 10.0),
                                   //       _buildBio(context),
-                                  Container(
+                                  snapshot.data.documents.elementAt(
+                                      index)['description'] !=null ? Container(
                                     width: 270,
                                     //color: Colors.white,
                                     child: Text(
@@ -183,206 +274,206 @@ class _UserProfileState extends State<UserProfile> {
                                         fontSize: 16.0,
                                       ),
                                     ),
-                                  ),
+                                  ):Container(),
                                   SizedBox(height: 8.0),
-                                  //       _buildpropertyStatus(context),
-                                  Container(
-                                    //color: Colors.grey[500],
-                                    color: Colors.teal[700],
-                                    child: Row(
-                                      mainAxisAlignment:
-                                      MainAxisAlignment.center,
-                                      children: <Widget>[
-                                        Container(
-                                          padding: EdgeInsets.symmetric(
-                                              vertical: 4.0,
-                                              horizontal: 6.0),
-                                          child: Text(
-                                            _listings,
-                                            style: TextStyle(
-                                              fontFamily: 'Spectral',
-                                              color: Colors.white,
-                                              fontSize: 18.0,
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  // _buildPropertyList(),
+//                                  //       _buildpropertyStatus(context),
 //                                  Container(
-//                                    margin: EdgeInsets.only(top: 15),
-//                                    height: 200,
-//                                    child: ListView(
-//                                      scrollDirection: Axis.horizontal,
+//                                    //color: Colors.grey[500],
+//                                    color: Colors.teal[700],
+//                                    child: Row(
+//                                      mainAxisAlignment:
+//                                      MainAxisAlignment.center,
 //                                      children: <Widget>[
-//                                        GestureDetector(
-//                                          onTap: () {
-//                                            Navigator.pushNamed(
-//                                                context, '/AdDetail');
-//                                          },
-//                                          child: Container(
-//                                            width: 160.0,
-//                                            child: Card(
-//                                              child: Wrap(
-//                                                children: <Widget>[
-//                                                  Container(
-//                                                    height: 140,
-//                                                    width: double.infinity,
-//                                                    child: Image.asset(
-//                                                      'assets/index.jpg',
-//
-//                                                      fit: BoxFit.cover,
-//                                                    ),
-//                                                  ),
-//                                                  Container(
-//                                                    color: Colors.grey,
-//                                                    child: ListTile(
-//                                                      title: Text(
-//                                                        'heading',
-//                                                        style: TextStyle(
-//                                                            fontSize: 16,
-//                                                            color: Colors
-//                                                                .black),
-//                                                      ),
-////                                                      subtitle: Text(
-////                                                        'subHeading',
-////                                                        style: TextStyle(
-////                                                            fontSize: 14, color: Colors.white),
-////                                                      ),
-//                                                    ),
-//                                                  ),
-//                                                ],
-//                                              ),
-//                                            ),
-//                                          ),
-//                                        ),
-//                                        GestureDetector(
-//                                          onTap: () {
-//                                            Navigator.pushNamed(
-//                                                context, '/AdDetail');
-//                                          },
-//                                          child: Container(
-//                                            width: 160.0,
-//                                            child: Card(
-//                                              child: Wrap(
-//                                                children: <Widget>[
-//                                                  Container(
-//                                                    height: 140,
-//                                                    width: double.infinity,
-//                                                    child: Image.asset(
-//                                                      'assets/index.jpg',
-//
-//                                                      fit: BoxFit.cover,
-//                                                    ),
-//                                                  ),
-//                                                  Container(
-//                                                    color: Colors.grey,
-//                                                    child: ListTile(
-//                                                      title: Text(
-//                                                        'heading',
-//                                                        style: TextStyle(
-//                                                            fontSize: 16,
-//                                                            color: Colors
-//                                                                .black),
-//                                                      ),
-////                                                      subtitle: Text(
-////                                                        'subHeading',
-////                                                        style: TextStyle(
-////                                                            fontSize: 14, color: Colors.white),
-////                                                      ),
-//                                                    ),
-//                                                  ),
-//                                                ],
-//                                              ),
-//                                            ),
-//                                          ),
-//                                        ),       GestureDetector(
-//                                          onTap: () {
-//                                            Navigator.pushNamed(
-//                                                context, '/AdDetail');
-//                                          },
-//                                          child: Container(
-//                                            width: 160.0,
-//                                            child: Card(
-//                                              child: Wrap(
-//                                                children: <Widget>[
-//                                                  Container(
-//                                                    height: 140,
-//                                                    width: double.infinity,
-//                                                    child: Image.asset(
-//                                                      'assets/index.jpg',
-//
-//                                                      fit: BoxFit.cover,
-//                                                    ),
-//                                                  ),
-//                                                  Container(
-//                                                    color: Colors.grey,
-//                                                    child: ListTile(
-//                                                      title: Text(
-//                                                        'heading',
-//                                                        style: TextStyle(
-//                                                            fontSize: 16,
-//                                                            color: Colors
-//                                                                .black),
-//                                                      ),
-////                                                      subtitle: Text(
-////                                                        'subHeading',
-////                                                        style: TextStyle(
-////                                                            fontSize: 14, color: Colors.white),
-////                                                      ),
-//                                                    ),
-//                                                  ),
-//                                                ],
-//                                              ),
+//                                        Container(
+//                                          padding: EdgeInsets.symmetric(
+//                                              vertical: 4.0,
+//                                              horizontal: 6.0),
+//                                          child: Text(
+//                                            _listings,
+//                                            style: TextStyle(
+//                                              fontFamily: 'Spectral',
+//                                              color: Colors.white,
+//                                              fontSize: 18.0,
+//                                              fontWeight: FontWeight.bold,
 //                                            ),
 //                                          ),
 //                                        ),
 //                                      ],
 //                                    ),
 //                                  ),
-                                  //   _showReviewForm(),
-//                                Container(
-//                                  margin: EdgeInsets.only(top: 30),
-//                                  child: Row(
-//                                    mainAxisAlignment: MainAxisAlignment.center,
-//                                    children: <Widget>[
-//                                      Container(
-//                                        color: Colors.grey[500],
-//                                        width: MediaQuery
-//                                            .of(context)
-//                                            .size
-//                                            .width,
-//                                        height: 25,
-//                                        child: Center(
-//                                          child: Text(
-//                                            'User Reviews',
-//                                            style: TextStyle(
-//                                                fontSize: 18,
-//                                                fontWeight: FontWeight.bold,
-//                                                color: Colors.black),
-//                                          ),
-//                                        ),
-//                                      )
-//                                    ],
-//                                  ),
-//                                ),
-                                  //  _showInformationForm(),
-//                                GestureDetector(
-//                                  onTap: () => showComments(
-//                                    context,
-//                                    postId: snapshot.data.documents.elementAt(index)['uid'],
-//                                    //ownerId: ownerId,
-//                                    //     mediaUrl: snapshot.data.documents.elementAt(index)['image'],
-//                                  ),
-//                                  child: Icon(
-//                                    Icons.chat,
-//                                    size: 28.0,
-//                                    color: Colors.blue[900],
-//                                  ),
-//                                ),
-
+//                                  // _buildPropertyList(),
+////                                  Container(
+////                                    margin: EdgeInsets.only(top: 15),
+////                                    height: 200,
+////                                    child: ListView(
+////                                      scrollDirection: Axis.horizontal,
+////                                      children: <Widget>[
+////                                        GestureDetector(
+////                                          onTap: () {
+////                                            Navigator.pushNamed(
+////                                                context, '/AdDetail');
+////                                          },
+////                                          child: Container(
+////                                            width: 160.0,
+////                                            child: Card(
+////                                              child: Wrap(
+////                                                children: <Widget>[
+////                                                  Container(
+////                                                    height: 140,
+////                                                    width: double.infinity,
+////                                                    child: Image.asset(
+////                                                      'assets/index.jpg',
+////
+////                                                      fit: BoxFit.cover,
+////                                                    ),
+////                                                  ),
+////                                                  Container(
+////                                                    color: Colors.grey,
+////                                                    child: ListTile(
+////                                                      title: Text(
+////                                                        'heading',
+////                                                        style: TextStyle(
+////                                                            fontSize: 16,
+////                                                            color: Colors
+////                                                                .black),
+////                                                      ),
+//////                                                      subtitle: Text(
+//////                                                        'subHeading',
+//////                                                        style: TextStyle(
+//////                                                            fontSize: 14, color: Colors.white),
+//////                                                      ),
+////                                                    ),
+////                                                  ),
+////                                                ],
+////                                              ),
+////                                            ),
+////                                          ),
+////                                        ),
+////                                        GestureDetector(
+////                                          onTap: () {
+////                                            Navigator.pushNamed(
+////                                                context, '/AdDetail');
+////                                          },
+////                                          child: Container(
+////                                            width: 160.0,
+////                                            child: Card(
+////                                              child: Wrap(
+////                                                children: <Widget>[
+////                                                  Container(
+////                                                    height: 140,
+////                                                    width: double.infinity,
+////                                                    child: Image.asset(
+////                                                      'assets/index.jpg',
+////
+////                                                      fit: BoxFit.cover,
+////                                                    ),
+////                                                  ),
+////                                                  Container(
+////                                                    color: Colors.grey,
+////                                                    child: ListTile(
+////                                                      title: Text(
+////                                                        'heading',
+////                                                        style: TextStyle(
+////                                                            fontSize: 16,
+////                                                            color: Colors
+////                                                                .black),
+////                                                      ),
+//////                                                      subtitle: Text(
+//////                                                        'subHeading',
+//////                                                        style: TextStyle(
+//////                                                            fontSize: 14, color: Colors.white),
+//////                                                      ),
+////                                                    ),
+////                                                  ),
+////                                                ],
+////                                              ),
+////                                            ),
+////                                          ),
+////                                        ),       GestureDetector(
+////                                          onTap: () {
+////                                            Navigator.pushNamed(
+////                                                context, '/AdDetail');
+////                                          },
+////                                          child: Container(
+////                                            width: 160.0,
+////                                            child: Card(
+////                                              child: Wrap(
+////                                                children: <Widget>[
+////                                                  Container(
+////                                                    height: 140,
+////                                                    width: double.infinity,
+////                                                    child: Image.asset(
+////                                                      'assets/index.jpg',
+////
+////                                                      fit: BoxFit.cover,
+////                                                    ),
+////                                                  ),
+////                                                  Container(
+////                                                    color: Colors.grey,
+////                                                    child: ListTile(
+////                                                      title: Text(
+////                                                        'heading',
+////                                                        style: TextStyle(
+////                                                            fontSize: 16,
+////                                                            color: Colors
+////                                                                .black),
+////                                                      ),
+//////                                                      subtitle: Text(
+//////                                                        'subHeading',
+//////                                                        style: TextStyle(
+//////                                                            fontSize: 14, color: Colors.white),
+//////                                                      ),
+////                                                    ),
+////                                                  ),
+////                                                ],
+////                                              ),
+////                                            ),
+////                                          ),
+////                                        ),
+////                                      ],
+////                                    ),
+////                                  ),
+//                                  //   _showReviewForm(),
+////                                Container(
+////                                  margin: EdgeInsets.only(top: 30),
+////                                  child: Row(
+////                                    mainAxisAlignment: MainAxisAlignment.center,
+////                                    children: <Widget>[
+////                                      Container(
+////                                        color: Colors.grey[500],
+////                                        width: MediaQuery
+////                                            .of(context)
+////                                            .size
+////                                            .width,
+////                                        height: 25,
+////                                        child: Center(
+////                                          child: Text(
+////                                            'User Reviews',
+////                                            style: TextStyle(
+////                                                fontSize: 18,
+////                                                fontWeight: FontWeight.bold,
+////                                                color: Colors.black),
+////                                          ),
+////                                        ),
+////                                      )
+////                                    ],
+////                                  ),
+////                                ),
+//                                  //  _showInformationForm(),
+////                                GestureDetector(
+////                                  onTap: () => showComments(
+////                                    context,
+////                                    postId: snapshot.data.documents.elementAt(index)['uid'],
+////                                    //ownerId: ownerId,
+////                                    //     mediaUrl: snapshot.data.documents.elementAt(index)['image'],
+////                                  ),
+////                                  child: Icon(
+////                                    Icons.chat,
+////                                    size: 28.0,
+////                                    color: Colors.blue[900],
+////                                  ),
+////                                ),
+//
                                   Container(
                                     margin: EdgeInsets.only(top: 30),
                                     child: Row(
@@ -413,7 +504,7 @@ class _UserProfileState extends State<UserProfile> {
                                   SizedBox(
                                     height: 17,
                                   ),
-                                  //    _showPersonalInformation(context),
+//                                  //    _showPersonalInformation(context),
                                   Container(
 //                                    decoration: BoxDecoration(
 //                                      borderRadius: BorderRadius.circular(40.0),
@@ -426,7 +517,10 @@ class _UserProfileState extends State<UserProfile> {
 
                                     child: Column(
                                       children: <Widget>[
-                                        Container(
+                                        snapshot.data.documents
+                                            .elementAt(
+                                            index)[
+                                        'displayName'] !=null ?  Container(
                                           height: 50,
                                           //color: Colors.grey[400],
                                           //color: Colors.grey[200],
@@ -480,8 +574,10 @@ class _UserProfileState extends State<UserProfile> {
                                               ],
                                             ),
                                           ),
-                                        ),
-                                        Container(
+                                        ):Container(),
+                                        snapshot.data.documents
+                                            .elementAt(
+                                            index)['age'] !=null? Container(
                                           height: 50,
                                           //color: Colors.grey[200],
                                           //color: Colors.blue[200],
@@ -523,8 +619,11 @@ class _UserProfileState extends State<UserProfile> {
                                               ],
                                             ),
                                           ),
-                                        ),
-                                        Container(
+                                        ):Container(),
+                                        snapshot.data.documents
+                                            .elementAt(
+                                            index)[
+                                        'address'] !=null? Container(
                                           height: 70,
                                           //color: Colors.grey[400],
                                           color: Colors.blue[200],
@@ -560,8 +659,11 @@ class _UserProfileState extends State<UserProfile> {
                                               ],
                                             ),
                                           ),
-                                        ),
-                                        Container(
+                                        ):Container(),
+                                        snapshot.data.documents
+                                            .elementAt(
+                                            index)[
+                                        'phoneNumber']!=null?Container(
                                           height: 50,
                                           //color: Colors.grey[200],
                                           // color: Colors.blue[200],
@@ -610,11 +712,13 @@ class _UserProfileState extends State<UserProfile> {
                                               ],
                                             ),
                                           ),
-                                        ),
+                                        ):Container(),
                                       ],
                                     ),
                                   ),
                                   //   _editProfileButton(),
+                                  snapshot
+                                      .data.documents.elementAt(index)['User Type']=="Agent" ?
                                   Container(
                                     child: Center(
                                       child: FlatButton(
@@ -638,7 +742,56 @@ class _UserProfileState extends State<UserProfile> {
                                         ),
                                       ),
                                     ),
+                                  )
+                                      :Container(
+                                      child: Center(
+                                        child: FlatButton(
+                                          onPressed: () {
+                                            Navigator.pushNamed(context, '/AgentSignup');
+                                          },
+                                          child: Container(
+                                            height: 50,
+                                            width: 170,
+                                            decoration: BoxDecoration(
+                                                color: Colors.grey[800],
+                                                borderRadius: BorderRadius.circular(10)),
+                                            child: Center(
+                                              child: Text(
+                                                "Edit Profile",
+                                                style:
+                                                TextStyle(color: Colors.white,
+                                                    fontWeight: FontWeight.bold),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
                                   ),
+//                                    :Container(
+//                      margin: EdgeInsets.only(top: 60),
+//                      child: Center(
+//                      child: FlatButton(
+//                      onPressed: () {
+//                      Navigator.pushNamed(context, '/AgentSignup');
+//                      },
+//                      child: Container(
+//                      height: 50,
+//                      width: 180,
+//                      decoration: BoxDecoration(
+//                      color: Colors.grey[800],
+//                      borderRadius: BorderRadius.circular(10)),
+//                      child: Center(
+//                      child: Text(
+//                      "Complete Your Profile",
+//                      style:
+//                      TextStyle(color: Colors.white,
+//                      fontWeight: FontWeight.bold),
+//                      ),
+//                      ),
+//                      ),
+//                      ),
+//                      ),
+//                      ),
                                   SizedBox(height: 8.0),
                                 ],
                               ),

@@ -1722,11 +1722,14 @@ class _ImageCarouselState extends State<ImageCarousel>{
     Chatdatabase.addChatRoom(chatRoom, chatRoomId);
 
 
-    Navigator.push(context, MaterialPageRoute(
-        builder: (context) => Chat(
-          chatRoomId: chatRoomId,
-        )
-    ));
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => Chat(
+              chatRoomId: chatRoomId,
+              userName: userName,
+            )),
+    );
 
   }
 

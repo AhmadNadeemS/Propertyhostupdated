@@ -15,14 +15,21 @@ class PostSecondScreen extends StatefulWidget{
   @override
   _PostSecondScreenState createState() => new _PostSecondScreenState();
 
-  String title;String desc; int price; String City;String AvailDays; String time; String unitArea; String location; String purpose,propertySize;
+  String title;
+  String desc;
+  int price;
+  String City;
+  String AvailDays;
+  String time;
+  String unitArea;
+  String location;
+  String purpose, propertySize;
 
 
-  PostSecondScreen(this.title ,this.desc,this.price,this.City,this.location,this.purpose,this.unitArea,this.AvailDays,this.time,this.propertySize,{Key key}): super(key: key);
-
-
-
-
+  PostSecondScreen(this.title, this.desc, this.price, this.City, this.location,
+      this.purpose, this.unitArea, this.AvailDays, this.time, this.propertySize,
+      {Key key})
+      : super(key: key);
 }
 
 
@@ -36,11 +43,8 @@ class _PostSecondScreenState extends State<PostSecondScreen>{
   bool isUploading = false;
   List<NetworkImage> _listOfImages = <NetworkImage>[];
 
-
   //List<Object> images = List<Object>();
   //Future<File> imageFile;
-
-
 
   PostAddFirebase createpost = PostAddFirebase();
 
@@ -165,15 +169,15 @@ class _PostSecondScreenState extends State<PostSecondScreen>{
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
   void showInSnackBar(String value) {
-    _scaffoldKey.currentState.showSnackBar(new SnackBar(content: new Text(value)));
+    _scaffoldKey.currentState.showSnackBar(
+        new SnackBar(content: new Text(value)));
   }
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
 //      backgroundColor: Colors.grey[600],
-    key: _scaffoldKey,
+      key: _scaffoldKey,
       body: Container(
 //        decoration: BoxDecoration(
 //          image: DecorationImage(
@@ -223,7 +227,7 @@ class _PostSecondScreenState extends State<PostSecondScreen>{
 
 
 
-                UploadPropertyImages(),
+              UploadPropertyImages(),
 
               //ReadImagesFromFirebaseStorage(),
               //_uploadImagesInput(),
@@ -235,7 +239,7 @@ class _PostSecondScreenState extends State<PostSecondScreen>{
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: <Widget>[
-                //buildGridView(),
+                    //buildGridView(),
                     Container(
 //                      decoration: BoxDecoration(
 //                          color: Colors.blue[200],
@@ -247,26 +251,32 @@ class _PostSecondScreenState extends State<PostSecondScreen>{
 //                        //  boxShadow: [BoxShadow(blurRadius: 10,color: Colors.black,offset: Offset(1,3))]// make rounded corner of border
 //                      ),
                       width: 200,
-                      height: MediaQuery.of(context).size.height/4,
-                        //color: Colors.green,
-                        child: buildGridView(),
+                      height: MediaQuery
+                          .of(context)
+                          .size
+                          .height / 4,
+                      //color: Colors.green,
+                      child: buildGridView(),
                     ),
                     RaisedButton(
                       child: Text("Submit"),
                       onPressed: () {
-                        if(_key.currentState.validate()){
+                        if (_key.currentState.validate()) {
                           _key.currentState.save();
                           showAlert("Post is Uploading. Please Wait ");
                           runMyFutureGetImagesReference();
-                          if(isAdmin)
-                            {
-                              Navigator.push(context,MaterialPageRoute(builder:(context)=>MainScreen(isAdmin: true,)));
-                            }
-                          else{
-                            Navigator.push(context,MaterialPageRoute(builder:(context)=>MainScreen(isAdmin: false,)));
+                          if (isAdmin) {
+                            Navigator.push(context, MaterialPageRoute(
+                                builder: (context) =>
+                                    MainScreen(isAgent: true,)));
+                          }
+                          else {
+                            Navigator.push(context, MaterialPageRoute(
+                                builder: (context) =>
+                                    MainScreen(isAgent: false,)));
                           }
 //                          return MainScreen(isAdmin: true,);
-                   //       Navigator.pushNamed(context, '/mainScreen');
+                          //       Navigator.pushNamed(context, '/mainScreen');
 
                         }
 
@@ -276,7 +286,7 @@ class _PostSecondScreenState extends State<PostSecondScreen>{
                           });
                         }
 
-                      //  Navigator.pushNamed(context, '/mainScreen');
+                        //  Navigator.pushNamed(context, '/mainScreen');
 //                      setState(() {
 //                        isButtonPressed7 = !isButtonPressed7;
 //                      });
@@ -303,7 +313,7 @@ class _PostSecondScreenState extends State<PostSecondScreen>{
 
     List<String> values =  await GetImageReferences();
 
-      print(values.length.toString() + "entered in runMyfuture method");
+    print(values.length.toString() + "entered in runMyfuture method");
 
     if (_selectedpropertyType == "Homes") {
       setState(() {
@@ -536,61 +546,57 @@ class _PostSecondScreenState extends State<PostSecondScreen>{
 //            width: 50,
 //            borderDarkerColor: MultiPickerApp.pauseButton,
 //            borderColor: MultiPickerApp.pauseButtonDarker,
-            child: ClipRRect(
-              borderRadius: BorderRadius.all(Radius.circular(15)),
-              child: Container(
-                decoration: BoxDecoration(
-                    border: Border.all(color: Colors.blueAccent,width: 2)
-                ),
-                child: AssetThumb(
-                  asset: asset,
-                  width: 300,
-                  height: 300,
-                ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.all(Radius.circular(15)),
+            child: Container(
+              decoration: BoxDecoration(
+                  border: Border.all(color: Colors.blueAccent, width: 2)
+              ),
+              child: AssetThumb(
+                asset: asset,
+                width: 300,
+                height: 300,
               ),
             ),
-        //  ),
+          ),
+          //  ),
         );
       }),
     );
   }
 
   Widget UploadPropertyImages() {
-        return Container(
+    return Container(
         child: Center(
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(10,10,10,10),
-                    child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: <Widget>[
-                    NiceButton(
-                    width: 250,
-                    elevation: 8.0,
-                    radius: 52.0,
-                    text: "Select Images",
-                    background:Colors.blueAccent,
-                    onPressed:() async {
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: <Widget>[
+                  NiceButton(
+                      width: 250,
+                      elevation: 8.0,
+                      radius: 52.0,
+                      text: "Select Images",
+                      background: Colors.blueAccent,
+                      onPressed: () async {
+                        List<Asset> asst = await loadAssets();
+                        if (asst.length == 0) {
+                          showAlert("No images selected");
+                        }
+                        SizedBox(height: 10,);
 
-                      List<Asset> asst = await loadAssets();
-                      if(asst.length==0){
-
-                        showAlert("No images selected");
-
-
+                        showInSnackBar('Images Successfully loaded');
+                        //                 SnackBar snackbar = SnackBar(content: Text('Please wait, we are uploading'));
+                        //_scaffoldKey.currentState.showSnackBar(new SnackBar(content: new Text(value)));
                       }
-                      SizedBox(height: 10,);
+                    //print(asst.length.toString() + "load asset completed");
 
-                      showInSnackBar('Images Successfully loaded');
-     //                 SnackBar snackbar = SnackBar(content: Text('Please wait, we are uploading'));
-    //_scaffoldKey.currentState.showSnackBar(new SnackBar(content: new Text(value)));
-    }
-                     //print(asst.length.toString() + "load asset completed");
-
-                   // }
-                    ),
+                    // }
+                  ),
 
 
-               /* imageUrls != null ? Container(
+                  /* imageUrls != null ? Container(
                     height: 200,
                     padding: EdgeInsets.all(16.0),
                     child: GridView.builder(
@@ -602,24 +608,24 @@ class _PostSecondScreenState extends State<PostSecondScreen>{
                 ))
                     : Center(child: Text("No images selected ")),*/
 
-    ],
-    ),
-    )
-   )
+                ],
+              ),
+            )
+        )
     );
 
   }
 
 
- Future<List<String>> GetImageReferences() async {
+  Future<List<String>> GetImageReferences() async {
 
     String error = "No error detected";
     List<String> urls = <String>[];
-   // var firebaseUser = await FirebaseAuth.instance.currentUser();
+    // var firebaseUser = await FirebaseAuth.instance.currentUser();
 
     try {
       for (var imageFile in images) {
-      await  postImage(imageFile).then((downloadUrl) {
+        await  postImage(imageFile).then((downloadUrl) {
           urls.add(downloadUrl.toString());
           print( "i am third line of awaiting post image");
           if (urls.length == images.length) {
@@ -650,73 +656,73 @@ class _PostSecondScreenState extends State<PostSecondScreen>{
       error = e.toString();
       print(error);
     }
-  return urls;
+    return urls;
 
   }
 
 
 
-Widget ReadImagesFromFirebaseStorage(){
+  Widget ReadImagesFromFirebaseStorage(){
 
 
     return Row(
-      children: <Widget>[
-        Expanded(
-          child:SizedBox(
-            height: 500,
-          child: StreamBuilder<QuerySnapshot>(
-              stream: Firestore.instance.collection('PostAdd').snapshots(),
-              builder: (context, snapshot) {
-                if (snapshot.hasData) {
-                  return ListView.builder(
-                      itemCount: snapshot.data.documents.length,
-                      itemBuilder: (BuildContext context, int index) {
-                        _listOfImages = [];
-                        for (int i = 0;
-                        i <
-                            snapshot.data.documents[index].data['Image Urls']
-                                .length;
-                        i++) {
-                          _listOfImages.add(NetworkImage(snapshot
-                              .data.documents[index].data['Image Urls'][i]));
+        children: <Widget>[
+          Expanded(
+              child:SizedBox(
+                  height: 500,
+                  child: StreamBuilder<QuerySnapshot>(
+                      stream: Firestore.instance.collection('PostAdd').snapshots(),
+                      builder: (context, snapshot) {
+                        if (snapshot.hasData) {
+                          return ListView.builder(
+                              itemCount: snapshot.data.documents.length,
+                              itemBuilder: (BuildContext context, int index) {
+                                _listOfImages = [];
+                                for (int i = 0;
+                                i <
+                                    snapshot.data.documents[index].data['Image Urls']
+                                        .length;
+                                i++) {
+                                  _listOfImages.add(NetworkImage(snapshot
+                                      .data.documents[index].data['Image Urls'][i]));
+                                }
+                                return Column(
+                                  children: <Widget>[
+                                    Container(
+                                      margin: EdgeInsets.all(10.0),
+                                      height: 200,
+                                      decoration: BoxDecoration(
+                                        color: Colors.white,
+                                      ),
+                                      width: MediaQuery.of(context).size.width,
+                                      child: Carousel(
+                                          boxFit: BoxFit.cover,
+                                          images: _listOfImages,
+                                          autoplay: false,
+                                          indicatorBgPadding: 5.0,
+                                          dotPosition: DotPosition.bottomCenter,
+                                          animationCurve: Curves.fastOutSlowIn,
+                                          animationDuration:
+                                          Duration(milliseconds: 2000)),
+                                    ),
+                                    Container(
+                                      height: 1,
+                                      width: MediaQuery.of(context).size.width,
+                                      color: Colors.red,
+                                    )
+                                  ],
+                                );
+                              });
+                        } else {
+                          return Center(
+                            child: CircularProgressIndicator(),
+                          );
                         }
-                        return Column(
-                          children: <Widget>[
-                            Container(
-                              margin: EdgeInsets.all(10.0),
-                              height: 200,
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                              ),
-                              width: MediaQuery.of(context).size.width,
-                              child: Carousel(
-                                  boxFit: BoxFit.cover,
-                                  images: _listOfImages,
-                                  autoplay: false,
-                                  indicatorBgPadding: 5.0,
-                                  dotPosition: DotPosition.bottomCenter,
-                                  animationCurve: Curves.fastOutSlowIn,
-                                  animationDuration:
-                                  Duration(milliseconds: 2000)),
-                            ),
-                            Container(
-                              height: 1,
-                              width: MediaQuery.of(context).size.width,
-                              color: Colors.red,
-                            )
-                          ],
-                        );
-                      });
-                } else {
-                  return Center(
-                    child: CircularProgressIndicator(),
-                  );
-                }
-              }))
+                      }))
 
-    )]
+          )]
     );
-}
+  }
 
 
 
@@ -960,7 +966,7 @@ Widget ReadImagesFromFirebaseStorage(){
               ),
             ],
           ),
-         // dropdownfield of flooring
+          // dropdownfield of flooring
 
         ],
       ),

@@ -8,27 +8,16 @@ import 'package:signup/activity_feed.dart';
 import 'package:signup/agentSignup.dart';
 import 'package:signup/chat/chatrooms.dart';
 import 'package:signup/choseOnMap.dart';
-import 'package:signup/MainScreenUsers.dart';
-import 'package:signup/MyProfileFinal.dart';
-import 'package:signup/activity_feed.dart';
-import 'package:signup/agentSignup.dart';
-//import 'package:signup/create_post_view.dart';
 import 'package:signup/forgetPassword.dart';
 import 'package:signup/home.dart';
-
+import 'package:signup/homeThree.dart';
+import 'package:signup/homeTwo.dart';
 import 'package:signup/main_screen.dart';
 import 'package:signup/myProfile.dart';
-import 'package:signup/postAdd.dart';
-import 'package:signup/random.dart';
 import 'package:signup/screens/postscreen1.dart';
-import 'package:signup/screens/postscreen2.dart';
 import 'package:signup/states/currentUser.dart';
 import 'package:signup/userProfile.dart';
 import 'package:signup/viewPostAdds.dart';
-
-import 'package:signup/random.dart';
-import 'package:signup/states/currentUser.dart';
-import 'package:signup/userProfile.dart';
 
 import './login.dart';
 import './signup.dart';
@@ -36,9 +25,6 @@ import 'package:provider/provider.dart';
 
 
 void main() => runApp(HomePage());
-//home: ChangeNotifierProvider(
-//create: (context) => DisplayReview(),
-//child: LoginPage()),
 
 
 class HomePage extends StatelessWidget {
@@ -48,15 +34,19 @@ class HomePage extends StatelessWidget {
       create: (context) => CurrentUser(),
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
-        home: MainScreen(isAdmin: false,),
+        home: MainScreen(
+          isAgent: false,
+        ),
         routes: {
           '/main': (context) => HomePage(),
           '/home': (context) => RoleCheck(),
+          '/homeTwo': (context) => RoleCheckTwo(),
+          '/homeThree': (context) => RoleCheckThree(),
           ActivityFeed.routeName: (context) => ActivityFeed(),
           //'/myProfileFinal': (context) => MyProfileFinal(),
           MyProfileFinal.routeName: (ctx) => MyProfileFinal(),
           ImageCarousel.routeName: (ctx) => ImageCarousel(),
-         // Random.routeName: (ctx) => Random(),
+          // Random.routeName: (ctx) => Random(),
           '/UserProfile': (context) => UserProfile(),
           '/mainScreen': (context) => MainScreen(),
           '/mainScreenUser': (context) => MainScreenUsers(),
@@ -64,16 +54,15 @@ class HomePage extends StatelessWidget {
           '/MyProfile': (context) => MyProfile(),
           '/Signup': (context) => SignUpPage(),
           '/ViewAdds': (context) => ViewAdds(),
-            '/PostDetail': (context) =>PostDetail(),
+          '/PostDetail': (context) => PostDetail(),
           '/postscreen1': (context) => PostFirstScreen(),
-          '/choseOnMap':(context) => ChoseOnMap(),
+          '/choseOnMap': (context) => ChoseOnMap(),
           '/AgentSignup': (context) => AgentSignUp(),
           '/ForgetPassword': (context) => ForgetPassword(),
           '/ImageCarousel': (context) => ImageCarousel(),
           '/AgentSignup': (context) => AgentSignUp(),
           '/ForgetPassword': (context) => ForgetPassword(),
           '/ChatRoom': (context) => ChatRoom(),
-
         },
       ),
     );

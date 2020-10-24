@@ -2,18 +2,19 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:signup/MainScreenUsers.dart';
+import 'package:signup/agentSignup.dart';
 import 'package:signup/main_screen.dart';
 import 'package:signup/signup.dart';
 import 'package:signup/userProfile.dart';
 
 import 'helper/helperfunctions.dart';
 
-class RoleCheckTwo extends StatefulWidget {
+class RoleCheckThree extends StatefulWidget {
   @override
-  _RoleCheckTwoState createState() => _RoleCheckTwoState();
+  _RoleCheckThreeState createState() => _RoleCheckThreeState();
 }
 
-class _RoleCheckTwoState extends State<RoleCheckTwo> {
+class _RoleCheckThreeState extends State<RoleCheckThree> {
   //RoleCheck(this.isAdmin);
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
@@ -78,7 +79,7 @@ class _RoleCheckTwoState extends State<RoleCheckTwo> {
       //isAdmin =true;
       print('agent');
       //MainScreen(isAdmin: true,);
-      return UserProfile(
+      return AgentSignUp(
         isAgent: true,
       );
       //return MainScreen(isAdmin);
@@ -87,7 +88,7 @@ class _RoleCheckTwoState extends State<RoleCheckTwo> {
       //isAdmin= false;
       print('other');
       //return MainScreen();
-      return UserProfile(
+      return AgentSignUp(
         isAgent: false,
       );
     }
