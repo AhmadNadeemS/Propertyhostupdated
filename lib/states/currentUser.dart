@@ -19,27 +19,15 @@ import 'package:signup/services/database.dart';
 
 class CurrentUser extends ChangeNotifier{
   OurUser _currentUser = OurUser();
-  //  String _uid;
     String _name;
   final commentsRef  = Firestore.instance.collection('comments');
-  //final CollectionReference _postsCollectionReference = Firestore.instance.collection('posts');
+
   OurUser get getCurrentUser => _currentUser;
   //String get getUid => _uid;
  bool _doneWithReview = false;
  bool get getDoneWithReview => _doneWithReview;
    String get getName => _name;
-//  AgentUser _agentUser = AgentUser();
-//  OurUser get getAgentUser => _currentUser;
   FirebaseAuth _auth = FirebaseAuth.instance;
-
-//  Future addPost(Post post) async {
-//    try {
-//      await _postsCollectionReference.add(post.toMap());
-//      return true;
-//    } catch (e) {
-//      return e.toString();
-//    }
-//  }
 
 
   Future<String> loginUserWithEmail(String email, String password, BuildContext context) async {
@@ -47,19 +35,8 @@ class CurrentUser extends ChangeNotifier{
     OurUser _user = OurUser();
     try{
       AuthResult _authResult = await _auth.signInWithEmailAndPassword(email: email.trim(), password: password);
- //     _user.displayName = _authResult.user.displayName;
-      // Navigator.push(context, MaterialPageRoute(builder: (context) => RoleCheck()));
-//      if(_authResult.user!=null)
-//      {
-//        _currentUser.uid = _authResult.user.uid;
-//        _currentUser.email = _authResult.user.email;
-//
-//        //        _uid = _authResult.user.uid;
-//       //        _email = _authResult.user.email;
-//       retVal = "Success";
       _currentUser = await OurDatabase().getUserInfo(_authResult.user.uid);
 
-      //_currentUser = await OurDatabase().getUser(_authResult.user.uid);
       if(_currentUser!=null)
       {
         retVal ="Success";
@@ -71,32 +48,7 @@ class CurrentUser extends ChangeNotifier{
     }
     return retVal;
   }
-//  void updateStateFromDatabase(String userId) async{
-//    OurUser user = OurUser();
-//    try{
-//      //Firestore.instance.collection('users').where("uid", isEqualTo:data).snapshots(),
-//      _doneWithReview = await OurDatabase().isUserDoneWithBook(userId);
-//      print('Value${_currentUser.uid}');
-//      notifyListeners();
-//    }
-//    catch(e)
-//    {
-//      print(e);
-//    }
-//  }
-//  void finishedBook(String userId,int rating,String review) async{
-//    OurUser user = OurUser();
-//    try{
-//      await OurDatabase().finishedBook(userId, rating, review);
-//      print('Value2${_currentUser.uid}');
-//      _doneWithReview = true;
-//      notifyListeners();
-//
-//    }
-//    catch(e){
-//      print(e);
-//    }
-//  }
+
   Future<String> onStartUp() async{
     String retVal = "error";
     try{
@@ -111,11 +63,6 @@ class CurrentUser extends ChangeNotifier{
         }
       }
 
-//      FirebaseUser _firebaseUser = await _auth.currentUser();
-//      _currentUser.uid = _firebaseUser.uid;
-//      _currentUser.email = _firebaseUser.email;
-      //_uid = _firebaseUser.uid;
-      //_email = _firebaseUser.email;
 
     }
     catch(e){
@@ -139,19 +86,9 @@ class CurrentUser extends ChangeNotifier{
     }
     return retVal;
   }
-//  Future<String> createUserWithEmailAndPassword(String email, String password,
-//      String name) async {
-//    final authResult = await _auth.createUserWithEmailAndPassword(
-//      email: email,
-//      password: password,
-//    );
-//
-//    // Update the username
-//   // await updateUserName(name, authResult.user);
-//    return authResult.user.uid;
-//  }
 
-  Future<String> signUpUser(String email, String password, String displayName,String title,String location,String age, String description, String phoneNumber,String role) async {
+
+  Future<String> signUpUser(String email, String password, String displayName,String title,String location,String age, String description, String phoneNumber,String userType) async {
     String retVal = "error";
     OurUser _user = OurUser();
     try{
@@ -164,7 +101,7 @@ class CurrentUser extends ChangeNotifier{
       //_user.firstName = _currentUser.firstName;
       //_user.lastName = lastName;
       _user.phoneNumber = phoneNumber;
-      _user.role = role;
+      _user.UserType = userType;
       String _returnString = await OurDatabase().createUser(_user);
 
       if(_returnString == 'Success')
@@ -182,36 +119,6 @@ class CurrentUser extends ChangeNotifier{
   }
 
 
-
-//  Future<String> signUpAgent(String email, String password, String firstName,String title,String location,String age, String description, String phoneNumber,String role) async {
-//    String retVal = "error";
-//    AgentUser _user = AgentUser();
-//    try{
-//      AuthResult _authResult = await _auth.createUserWithEmailAndPassword(email: email, password: password);
-//      _user.uid = _authResult.user.uid;
-//      _user.email = _authResult.user.email;
-//      _user.firstName = firstName;
-//      _user.title = title;
-//      _user.age = age;
-//      _user.location = location;
-//      _user.description = description;
-//      _user.phoneNumber = phoneNumber;
-//      _user.role = role;
-//      String _returnString = await AgentDatabase().createUser(_user);
-//
-//      if(_returnString == 'Success')
-//      {
-//        retVal = "Success";
-//      }
-//    } on PlatformException catch (e)
-//    {
-//      retVal= e.message;
-//    }
-//    catch(e){
-//      retVal = e.message;
-//    }
-//    return retVal;
-//  }
 
   Future<String> loginUserWithGoogle() async {
     String retVal = "error";
@@ -238,6 +145,7 @@ class CurrentUser extends ChangeNotifier{
         OurDatabase().createUser(_user);
 
       }
+
 //      _currentUser.uid = _authResult.user.uid;
 //      _currentUser.email = _authResult.user.email;
 
@@ -257,6 +165,8 @@ class CurrentUser extends ChangeNotifier{
     catch(e){
       retVal = e.message;
     }
+
     return retVal;
   }
+
 }

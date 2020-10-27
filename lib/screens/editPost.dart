@@ -3,39 +3,27 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:multi_image_picker/multi_image_picker.dart';
 import 'package:nice_button/NiceButton.dart';
-import 'package:signup/main_screen.dart';
+import 'package:path/path.dart';
 import 'package:signup/models/Adpost.dart';
 import 'package:signup/services/PostAdCreation.dart';
-import '../utils.dart';
+import '../AppLogic/validation.dart';
 
 
-class PostSecondScreen extends StatefulWidget{
-
+class EditPost extends StatefulWidget {
   @override
-  _PostSecondScreenState createState() => new _PostSecondScreenState();
+  _EditPostState createState() => _EditPostState();
 
-  String title;
-  String desc;
-  int price;
-  String City;
-  String AvailDays;
-  String time;
-  String unitArea;
-  String address;
-  String purpose, propertySize;
 
-  String location;
+  AdPost adPost;
+  EditPost({this.adPost});
 
-  PostSecondScreen(this.title, this.desc, this.price, this.City, this.address,
-      this.purpose, this.unitArea, this.AvailDays, this.time, this.propertySize,
-      {Key key})
-      : super(key: key);
 }
 
+class _EditPostState extends State<EditPost> {
 
-class _PostSecondScreenState extends State<PostSecondScreen>{
 
   List<Asset> images = List<Asset>();
   List<String> imageUrls = <String>[];
@@ -45,10 +33,10 @@ class _PostSecondScreenState extends State<PostSecondScreen>{
   bool isUploading = false;
   List<NetworkImage> _listOfImages = <NetworkImage>[];
 
-
+  //List<Object> images = List<Object>();
+  //Future<File> imageFile;
 
   PostAddFirebase createpost = PostAddFirebase();
-  AdPost adPost = new AdPost();
 
   // main features controllers
 
@@ -61,8 +49,6 @@ class _PostSecondScreenState extends State<PostSecondScreen>{
 
   TextEditingController flooring = new TextEditingController();
 
-
-
   //ends here
 
   GlobalKey<FormState> _key = new GlobalKey();
@@ -71,25 +57,11 @@ class _PostSecondScreenState extends State<PostSecondScreen>{
 
 
 
-  /*void initState() {
-    // TODO: implement initState
-    super.initState();
-    setState(() {
-      images.add("Add Image");
-      images.add("Add Image");
-      images.add("Add Image");
-      images.add("Add Image");
-    });
-  }*/
-
-
-
   String dropdownTo;
   String dropdownFrom;
   String dropdownCondition;
   String _selectedpropertyType;
   String _selectedpropertyDetailType;
-
 
 
   int value = 0;
@@ -112,7 +84,6 @@ class _PostSecondScreenState extends State<PostSecondScreen>{
   bool _checkBoxVal8 = false;
 
 
-
   List<String> _propertyType = ['Homes', 'Plots', 'Commercial'];
 
   List<String> _propertyTypeHomes = [
@@ -125,10 +96,6 @@ class _PostSecondScreenState extends State<PostSecondScreen>{
   ];
 
 
-
-
-
-
   List<String> _propertyTypePlots = [
     'Residential Plot',
     'Commerical Plot',
@@ -139,8 +106,6 @@ class _PostSecondScreenState extends State<PostSecondScreen>{
   ];
 
 
-
-
   List<String> _propertyTypeCommercial = [
     'Office',
     'Shop',
@@ -149,9 +114,6 @@ class _PostSecondScreenState extends State<PostSecondScreen>{
     'Building',
     'Other'
   ];
-
-
-
 
 
   List<String> _getPropertyTypeDetails() {
@@ -173,14 +135,54 @@ class _PostSecondScreenState extends State<PostSecondScreen>{
   void showInSnackBar(String value) {
     _scaffoldKey.currentState.showSnackBar(
         new SnackBar(content: new Text(value)));
+  }
 
+// Controllers of text fields
+
+  TextEditingController titleController = new TextEditingController();
+  TextEditingController descController = new TextEditingController();
+  TextEditingController priceController = new TextEditingController();
+  TextEditingController addressController = new TextEditingController();
+
+  TextEditingController MetTimeController = new TextEditingController();
+  TextEditingController AvailDays = new TextEditingController();
+  TextEditingController cityController = new TextEditingController();
+  TextEditingController propertySize = new TextEditingController();
+
+  // ends here
+
+  String _selectedUnitArea;
+
+  List<String> _UnitArea = ['Marla', 'Canal'];
+
+  String title;
+  String desc;
+  int price;
+  String location;
+  String purpose;
+
+  String description;
+  String _selectedPurpose;
+
+  List<String> _purpose = ['For Sale', 'Rent'];
+
+  @override
+  void initState() {
+    titleController.text = widget.adPost.title;
+    descController.text = widget.adPost.desc;
+    priceController.text=widget.adPost.price.toString();
+    propertySize.text=widget.adPost.propertySize;
+    MetTimeController.text=widget.adPost.time;
+    AvailDays.text=widget.adPost.unitArea;
+    cityController.text=widget.adPost.City;
+    addressController.text=widget.adPost.Address;
+    super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
 //      backgroundColor: Colors.grey[600],
-      key: _scaffoldKey,
       body: Container(
 //        decoration: BoxDecoration(
 //          image: DecorationImage(
@@ -195,12 +197,11 @@ class _PostSecondScreenState extends State<PostSecondScreen>{
             children: <Widget>[
               Center(
                 child: Text(
-                  "Post New Ad",
+                  "Edit Post",
                   style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
                 ),
               ),
               AddPost(),
-
               Padding(
                 padding: EdgeInsets.fromLTRB(0, 0, 0, 16),
               ),
@@ -209,236 +210,403 @@ class _PostSecondScreenState extends State<PostSecondScreen>{
         ),
       ),
     );
-
-
-
   }
 
-  Widget AddPost(){
+
+  Widget AddPost() {
     return Form(
       key: _key,
       autovalidate: _validate,
       child: Padding(
-          padding: const EdgeInsets.fromLTRB(0.0, 20.0, 0.0, 0.0),
-          child:Column(
-            children: <Widget>[
+        padding: const EdgeInsets.fromLTRB(0.0, 20.0, 0.0, 0.0),
+        child: Column(children: <Widget>[
+          TextFormField(
+            controller: titleController,
+            keyboardType: TextInputType.text,
+            validator: validateTitle,
+            onSaved: (String val) {
+              title = val;
+            },
+            maxLines: 1,
+            autofocus: false,
+            decoration: InputDecoration(
+                prefixIcon: Icon(
+                  Icons.title,
+                  color: Color(0xff2470c7),
+                ),
+                //  hintText: widget.adPost.title,
+                labelText: 'Title'),
+          ),
+          TextFormField(
+            controller: descController,
+            keyboardType: TextInputType.text,
+            validator: ValidateDescp,
+            onSaved: (String val) {
+              description = val;
+            },
+            maxLines: 2,
+            autofocus: false,
+            decoration: InputDecoration(
+                prefixIcon: Icon(
+                  Icons.description,
+                  color: Color(0xff2470c7),
+                ),
+                labelText: 'Description'),
+            //textAlign: TextAlign,
+          ),
+          TextFormField(
+            controller: priceController,
+            keyboardType: TextInputType.number,
+            autofocus: false,
+            decoration: InputDecoration(
+                prefixIcon: Icon(
+                  Icons.attach_money,
+                  color: Color(0xff2470c7),
+                ),
+                labelText: 'Price'),
+            validator: (value) => value.isEmpty ? 'Please enter price' : null,
+          ),
+          TextFormField(
+            controller: cityController,
+            keyboardType: TextInputType.text,
+            validator: ValidateDescp,
+            onSaved: (String val) {
+              description = val;
+            },
+            maxLines: 2,
+            autofocus: false,
+            decoration: InputDecoration(
+                prefixIcon: Icon(
+                  Icons.location_city,
+                  color: Color(0xff2470c7),
+                ),
+                labelText: 'City'),
+            //textAlign: TextAlign,
+          ),
+          TextFormField(
+            controller: addressController,
+            keyboardType: TextInputType.text,
+            validator: ValidateLocation,
+            onSaved: (String val) {
+              description = val;
+            },
+            maxLines: 1,
+            //autofocus: true,
+            decoration: InputDecoration(
+                prefixIcon: Container(
+                  margin: EdgeInsets.only(left: 5),
+                  child: Icon(
+                    Icons.pin_drop,
+                    color: Color(0xff2470c7),
+                  ),
+                ),
+                labelText: 'Enter Address ! Example: G-10/1 Islamabad ,'),
+          ),
+          _showonMap(),
+          _getPurposeDropDown(),
+          _UnitAreaDropDown(),
+          _propertySize(),
+          _selectMeetingTime(),
+          _getPropertyTypeDropDown(),
+          _getPropertyTypeDetailDropDown(),
 
-              _getPropertyTypeDropDown(),
-              _getPropertyTypeDetailDropDown(),
+          _selectedpropertyDetailType == 'House'
+              ? _showExpansionList()
+              : _selectedpropertyDetailType == 'Flat'
+              ? _showExpansionList()
+              : _selectedpropertyDetailType == 'Upper Portion'
+              ? _showExpansionList()
+              : _selectedpropertyDetailType == 'Lower Portion'
+              ? _showExpansionList()
+              : _selectedpropertyDetailType == 'Farm House'
+              ? _showExpansionList()
+              : _selectedpropertyDetailType == 'Residential Plot'
+              ? _showExpansionListPlot()
+              : _selectedpropertyDetailType == 'Commercial Plot'
+              ? _showExpansionListPlot()
+              : _selectedpropertyDetailType == 'Agricultural Plot'
+              ? _showExpansionListPlot()
+              : _selectedpropertyDetailType == 'Office'
+              ? _showExpansionListCommercial()
+              : _selectedpropertyDetailType == 'Shop'
+              ? _showExpansionListCommercial()
+              : _selectedpropertyDetailType == 'Ware House'
+              ? _showExpansionListCommercial()
+              : _selectedpropertyDetailType == 'Factory'
+              ? _showExpansionListCommercial()
+              : _selectedpropertyDetailType == 'Building'
+              ? _showExpansionListCommercial()
+              : _selectedpropertyDetailType == 'Other'
+              ? _showExpansionListCommercial()
+              : _hideExpansionList(),
 
-              _selectedpropertyDetailType=='House'? _showExpansionList(): _selectedpropertyDetailType=='Flat'? _showExpansionList():_selectedpropertyDetailType=='Upper Portion'? _showExpansionList():_selectedpropertyDetailType=='Lower Portion'? _showExpansionList():_selectedpropertyDetailType=='Farm House'? _showExpansionList(): _selectedpropertyDetailType=='Residential Plot'? _showExpansionListPlot():_selectedpropertyDetailType=='Commercial Plot'? _showExpansionListPlot():_selectedpropertyDetailType=='Agricultural Plot'? _showExpansionListPlot(): _selectedpropertyDetailType=='Office'? _showExpansionListCommercial(): _selectedpropertyDetailType=='Shop'? _showExpansionListCommercial(): _selectedpropertyDetailType=='Ware House'? _showExpansionListCommercial(): _selectedpropertyDetailType=='Factory'? _showExpansionListCommercial():_selectedpropertyDetailType=='Building'? _showExpansionListCommercial(): _selectedpropertyDetailType=='Other'? _showExpansionListCommercial():_hideExpansionList(),
 
+          UploadPropertyImages(),
 
+          RaisedButton(
+            child: Text("Submit"),
+            onPressed: () {
+              if (_key.currentState.validate()) {
+                _key.currentState.save();
 
-              UploadPropertyImages(),
-
-              //ReadImagesFromFirebaseStorage(),
-              //_uploadImagesInput(),
-              //_showSelectImages(),
-              //_showAddImages(),
-              Container(
-
-                margin: EdgeInsets.only(left: 7),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: <Widget>[
-                    //buildGridView(),
-                    Container(
-//                      decoration: BoxDecoration(
-//                          color: Colors.blue[200],
-//                          border: Border.all(
-//                              color: Colors.pink[800],// set border color
-//                              width: 3.0),   // set border width
-//                          borderRadius: BorderRadius.all(
-//                              Radius.circular(10.0)), // set rounded corner radius
-//                        //  boxShadow: [BoxShadow(blurRadius: 10,color: Colors.black,offset: Offset(1,3))]// make rounded corner of border
-//                      ),
-                      width: 200,
-                      height: MediaQuery
-                          .of(context)
-                          .size
-                          .height / 4,
-                      //color: Colors.green,
-                      child: buildGridView(),
-                    ),
-                    RaisedButton(
-                      child: Text("Submit"),
-                      onPressed: () {
-                        if (_key.currentState.validate()) {
-                          _key.currentState.save();
-                          showAlert("Post is Uploading. Please Wait ");
-                          runMyFutureGetImagesReference();
-                          if (isAdmin) {
-                            Navigator.push(context, MaterialPageRoute(
-                                builder: (context) =>
-                                    MainScreen(isAgent: true,)));
-                          }
-                          else {
-                            Navigator.push(context, MaterialPageRoute(
-                                builder: (context) =>
-                                    MainScreen(isAgent: false,)));
-                          }
+             //   PostAddFirebase().updatePost(String postId,adPost);
+              //  showAlert("Post is Uploading. Please Wait ");
+               // runMyFutureGetImagesReference();
 //                          return MainScreen(isAdmin: true,);
-                          //       Navigator.pushNamed(context, '/mainScreen');
+                //       Navigator.pushNamed(context, '/mainScreen');
 
-                        }
+              }
 
-                        else{
-                          setState(() {
-                            _validate = true;
-                          });
-                        }
+              else{
+                setState(() {
+                  _validate = true;
+                });
+              }
 
-                        //  Navigator.pushNamed(context, '/mainScreen');
+              //  Navigator.pushNamed(context, '/mainScreen');
 //                      setState(() {
 //                        isButtonPressed7 = !isButtonPressed7;
 //                      });
-                      },
-                      textColor: Colors.black,
-                      padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
-                      splashColor: Colors.grey,
+            },
+            textColor: Colors.black,
+            padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
+            splashColor: Colors.grey,
+          ),
+
+
+        ]),
+      ),
+    );
+  }
+
+
+  Widget _UnitAreaDropDown() {
+    return Row(
+      children: <Widget>[
+        //Icon(Icons.map, color: Colors.grey),
+        Container(),
+        Flexible(
+          child: ButtonTheme(
+            alignedDropdown: true,
+            child: DropdownButtonFormField(
+              decoration: InputDecoration(
+                  prefixIcon: Container(
+                    margin: EdgeInsets.only(left: 10),
+                    child: Icon(
+                      Icons.ac_unit,
+                      color: Color(0xff2470c7),
                     ),
-                  ],
+                  ),
+                  labelText: 'Unit Area'),
+              value: _selectedUnitArea,
+              onChanged: (newValue) {
+                setState(() {
+                  _selectedUnitArea = newValue;
+                  //                _selectedPropertyTypeData = _getCities().first;
+                });
+              },
+              items: _UnitArea.map((unitarea) {
+                return DropdownMenuItem(
+                  child: Text(unitarea),
+                  value: unitarea,
+                );
+              }).toList(),
+              validator: (value) =>
+              value == null ? 'Please select a Unit Area' : null,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _selectMeetingTime() {
+    return Container(
+      //constraints: BoxConstraints(maxWidth: 250),
+
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: <Widget>[
+          Row(
+            children: <Widget>[
+              Container(
+                  margin: EdgeInsets.only(right: 10, top: 15),
+                  child: Text(
+                    'Available Days:',
+                    style: TextStyle(fontSize: 15),
+                  )),
+              Row(
+                children: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(0.0, 20.0, 0.0, 0.0),
+                    child: Container(
+                      width: 200,
+                      child: TextFormField(
+                        controller: AvailDays,
+                        keyboardType: TextInputType.text,
+                        maxLines: 1,
+                        //autofocus: true,
+
+                        decoration:
+                        InputDecoration(labelText: 'Monday-Wednesday ,'),
+
+                        validator: (value) =>
+                        value.isEmpty ? 'Field can\'t be empty' : null,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+          Row(
+            children: <Widget>[
+              Container(
+                  margin: EdgeInsets.only(right: 10, top: 15),
+                  child: Text(
+                    'Mention Time :',
+                    style: TextStyle(fontSize: 15),
+                  )),
+              Row(
+                children: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(0.0, 20.0, 0.0, 0.0),
+                    child: Container(
+                      width: 200,
+                      child: TextFormField(
+                        controller: MetTimeController,
+                        keyboardType: TextInputType.text,
+                        maxLines: 1,
+                        //autofocus: true,
+
+                        decoration: InputDecoration(
+                            prefixIcon: Icon(
+                              Icons.pin_drop,
+                              color: Color(0xff2470c7),
+                            ),
+                            labelText: '1-3 pm ,'),
+
+                        validator: (value) =>
+                        value.isEmpty ? 'Time Field can\'t be empty' : null,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _propertySize() {
+    return Column(
+      children: <Widget>[
+        Padding(
+          padding: const EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 0.0),
+          child: Container(
+            child: TextFormField(
+              controller: propertySize,
+              keyboardType: TextInputType.number,
+              maxLines: 1,
+              //autofocus: true,
+
+              decoration: InputDecoration(
+                  prefixIcon: Container(
+                    margin: EdgeInsets.only(left: 10),
+                    child: Icon(
+                      Icons.mode_edit,
+                      color: Color(0xff2470c7),
+                    ),
+                  ),
+                  labelText: 'Enter property size'),
+
+              validator: (value) =>
+              value.isEmpty ? 'Field can\'t be empty' : null,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _showonMap() {
+    return Container(
+      margin: EdgeInsets.only(top: 15, left: 30),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          Padding(
+            padding: const EdgeInsets.only(right: 8.0),
+            child: RaisedButton.icon(
+              onPressed: () {},
+              icon: Icon(
+                Icons.map,
+                color: Colors.white,
+                textDirection: TextDirection.ltr,
+              ),
+              label: FlatButton(
+                onPressed: () {
+                  Navigator.pushNamed(this.context, '/choseOnMap');
+                },
+                child: Text(
+                  'Choose Area on Map',
+                  style: TextStyle(color: Colors.white),
                 ),
               ),
-
-              //_showSubmitButton(),
-
-            ],
-          )
+              color: Colors.deepPurple,
+            ),
+          ),
+        ],
       ),
-
     );
-
   }
 
-  void runMyFutureGetImagesReference() async{
-
-    List<String> values =  await GetImageReferences();
-
-    print(values.length.toString() + "entered in runMyfuture method");
-
-    if (_selectedpropertyType == "Homes") {
-      if(_selectedpropertyDetailType =="Pent House") {
-        adPost.title = widget.title;
-        adPost.desc = widget.desc;
-        adPost.price = widget.price;
-        adPost.Address = widget.address;
-        adPost.City = widget.City;
-        adPost.AvailDays = widget.AvailDays;
-        adPost.time = widget.time;
-        adPost.propertySize = widget.propertySize;
-        adPost.unitArea = widget.unitArea;
-        adPost.purpose = widget.purpose;
-        adPost.propertyType = _selectedpropertyType;
-        adPost.propertyDeatil = _selectedpropertyDetailType;
-        adPost.ImageUrls = values;
-
-        createpost.CreatePostAddHomesPentHouse(adPost);
-
-
-      } else{
-
-        setState(() {
-          if (buildYear.text.isEmpty || parkingSpace.text.isEmpty ||
-              Rooms.text.isEmpty || BathRooms.text.isEmpty
-              || kitchens.text.isEmpty || Floors.text.isEmpty) {
-            _validate = true;
-          }
-          else {
-            adPost.title = widget.title;
-            adPost.desc = widget.desc;
-            adPost.price = widget.price;
-            adPost.Address = widget.address;
-            adPost.City = widget.City;
-            adPost.AvailDays = widget.AvailDays;
-            adPost.time = widget.time;
-            adPost.propertySize = widget.propertySize;
-            adPost.unitArea = widget.unitArea;
-            adPost.purpose = widget.purpose;
-            adPost.propertyType = _selectedpropertyType;
-            adPost.propertyDeatil = _selectedpropertyDetailType;
-            adPost.buildyear = buildYear.text;
-            adPost.ParkingSpace = parkingSpace.text;
-            adPost.Rooms = Rooms.text;
-            adPost.bathrooms = BathRooms.text;
-            adPost.Kitchens = kitchens.text;
-            adPost.Floors = Floors.text;
-            adPost.ImageUrls = values;
-
-            createpost.CreatePostAddHomes(adPost);
-
-            // print(imageUrls);
-          }
-        });
-      }
-    }
-
-    else if (_selectedpropertyType == "Plots") {
-
-      adPost.title = widget.title;
-      adPost.desc= widget.desc;
-      adPost.price= widget.price;
-      adPost.Address= widget.address;
-      adPost.City= widget.City;
-      adPost.AvailDays=widget.AvailDays;
-      adPost.time= widget.time;
-      adPost.propertySize= widget.propertySize;
-      adPost.unitArea=widget.unitArea;
-      adPost.purpose= widget.purpose;
-      adPost.propertyType=  _selectedpropertyType;
-      adPost.propertyDeatil= _selectedpropertyDetailType;
-      adPost.possesion=  _checkBoxVal;
-     adPost.ParkingSpaces= _checkBoxVal2;
-     adPost.corners = _checkBoxVal3;
-     adPost.disputed= _checkBoxVal4;
-     adPost.balloted= _checkBoxVal5;
-     adPost.suiGas= _checkBoxVal6;
-     adPost.waterSupply = _checkBoxVal7;
-      adPost.sewarge= _checkBoxVal8;
-
-      adPost.ImageUrls = values;
-      createpost.CreatePostAddPlots(adPost);
-    }
-
-    else {
-      setState(() {
-        if (buildYear.text.isEmpty || parkingSpace.text.isEmpty ||
-            flooring.text.isEmpty || Rooms.text.isEmpty ||
-            Floors.text.isEmpty) {
-          _validate = true;
-        }
-        else {
-          adPost.title = widget.title;
-          adPost.desc= widget.desc;
-          adPost.price= widget.price;
-          adPost.Address= widget.address;
-          adPost.City= widget.City;
-          adPost.AvailDays=widget.AvailDays;
-          adPost.time= widget.time;
-          adPost.propertySize= widget.propertySize;
-          adPost.unitArea=widget.unitArea;
-          adPost.purpose= widget.purpose;
-          adPost.propertyType=  _selectedpropertyType;
-          adPost.propertyDeatil= _selectedpropertyDetailType;
-          adPost.buildyear=  buildYear.text;
-          adPost.ParkingSpace= parkingSpace.text;
-          adPost.Rooms=   Rooms.text;
-          adPost.Floors= Floors.text;
-          adPost.possesion=  _checkBoxVal;
-          adPost.ParkingSpaces= _checkBoxVal2;
-          adPost.corners = _checkBoxVal3;
-          adPost.disputed= _checkBoxVal4;
-          adPost.ImageUrls = values;
-          createpost.CreatePostAddCommerical(adPost);
-        }
-      });
-    }
-
-    showAlert("uploaded successfully");
-    Navigator.of(context).pop();
-
+  Widget _getPurposeDropDown() {
+    return Row(
+      children: <Widget>[
+        //Icon(Icons.map, color: Colors.grey),
+        Container(
+          //margin: EdgeInsets.only(left: 5,),
+          //width: 7.0,
+        ),
+        Flexible(
+          child: ButtonTheme(
+            alignedDropdown: true,
+            child: DropdownButtonFormField(
+              decoration: InputDecoration(
+                  prefixIcon: Container(
+                    margin: EdgeInsets.only(left: 10),
+                    child: Icon(
+                      Icons.home,
+                      color: Color(0xff2470c7),
+                    ),
+                  ),
+                  labelText: 'Choose Purpose'),
+              value: _selectedPurpose,
+              onChanged: (newValue) {
+                setState(() {
+                  _selectedPurpose = newValue;
+                  //                _selectedPropertyTypeData = _getCities().first;
+                });
+              },
+              items: _purpose.map((purpose) {
+                return DropdownMenuItem(
+                  child: Text(purpose),
+                  value: purpose,
+                );
+              }).toList(),
+              validator: (value) =>
+              value == null ? 'Please select a purpose' : null,
+            ),
+          ),
+        ),
+      ],
+    );
   }
+
 
   Widget _getPropertyTypeDropDown() {
     return Row(
@@ -527,33 +695,6 @@ class _PostSecondScreenState extends State<PostSecondScreen>{
   }
 
 
-
-
-  showAlert(String a) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: new Text(a),
-          actions: <Widget>[
-            FlatButton(
-              child: Text(
-                "Ok",
-                style: Theme.of(context).textTheme.caption.copyWith(
-                    fontWeight: FontWeight.w600,
-                    color: Colors.blue
-                ),
-              ),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        );
-      },
-    );
-  }
-
   Widget buildGridView() {
     return GridView.count(
       crossAxisCount: 3,
@@ -605,7 +746,7 @@ class _PostSecondScreenState extends State<PostSecondScreen>{
                       onPressed: () async {
                         List<Asset> asst = await loadAssets();
                         if (asst.length == 0) {
-                          showAlert("No images selected");
+                          //  showAlert("No images selected");
                         }
                         SizedBox(height: 10,);
 
@@ -636,21 +777,19 @@ class _PostSecondScreenState extends State<PostSecondScreen>{
             )
         )
     );
-
   }
 
 
   Future<List<String>> GetImageReferences() async {
-
     String error = "No error detected";
     List<String> urls = <String>[];
     // var firebaseUser = await FirebaseAuth.instance.currentUser();
 
     try {
       for (var imageFile in images) {
-        await  postImage(imageFile).then((downloadUrl) {
+        await postImage(imageFile).then((downloadUrl) {
           urls.add(downloadUrl.toString());
-          print( "i am third line of awaiting post image");
+          print("i am third line of awaiting post image");
           if (urls.length == images.length) {
             print(urls.length.toString() + " images selected" +
                 urls.toString());
@@ -680,21 +819,18 @@ class _PostSecondScreenState extends State<PostSecondScreen>{
       print(error);
     }
     return urls;
-
   }
 
 
-
-  Widget ReadImagesFromFirebaseStorage(){
-
-
+  Widget ReadImagesFromFirebaseStorage() {
     return Row(
         children: <Widget>[
           Expanded(
-              child:SizedBox(
+              child: SizedBox(
                   height: 500,
                   child: StreamBuilder<QuerySnapshot>(
-                      stream: Firestore.instance.collection('PostAdd').snapshots(),
+                      stream: Firestore.instance.collection('PostAdd')
+                          .snapshots(),
                       builder: (context, snapshot) {
                         if (snapshot.hasData) {
                           return ListView.builder(
@@ -703,11 +839,13 @@ class _PostSecondScreenState extends State<PostSecondScreen>{
                                 _listOfImages = [];
                                 for (int i = 0;
                                 i <
-                                    snapshot.data.documents[index].data['Image Urls']
+                                    snapshot.data.documents[index]
+                                        .data['Image Urls']
                                         .length;
                                 i++) {
                                   _listOfImages.add(NetworkImage(snapshot
-                                      .data.documents[index].data['Image Urls'][i]));
+                                      .data.documents[index]
+                                      .data['Image Urls'][i]));
                                 }
                                 return Column(
                                   children: <Widget>[
@@ -717,7 +855,10 @@ class _PostSecondScreenState extends State<PostSecondScreen>{
                                       decoration: BoxDecoration(
                                         color: Colors.white,
                                       ),
-                                      width: MediaQuery.of(context).size.width,
+                                      width: MediaQuery
+                                          .of(context)
+                                          .size
+                                          .width,
                                       child: Carousel(
                                           boxFit: BoxFit.cover,
                                           images: _listOfImages,
@@ -730,7 +871,10 @@ class _PostSecondScreenState extends State<PostSecondScreen>{
                                     ),
                                     Container(
                                       height: 1,
-                                      width: MediaQuery.of(context).size.width,
+                                      width: MediaQuery
+                                          .of(context)
+                                          .size
+                                          .width,
                                       color: Colors.red,
                                     )
                                   ],
@@ -743,16 +887,20 @@ class _PostSecondScreenState extends State<PostSecondScreen>{
                         }
                       }))
 
-          )]
+          )
+        ]
     );
   }
 
 
-
   Future<dynamic> postImage(Asset imageFile) async {
-    String fileName = DateTime.now().millisecondsSinceEpoch.toString();
+    String fileName = DateTime
+        .now()
+        .millisecondsSinceEpoch
+        .toString();
     StorageReference reference = FirebaseStorage.instance.ref().child(fileName);
-    StorageUploadTask uploadTask = reference.putData((await imageFile.getByteData()).buffer.asUint8List());
+    StorageUploadTask uploadTask = reference.putData(
+        (await imageFile.getByteData()).buffer.asUint8List());
     StorageTaskSnapshot storageTaskSnapshot = await uploadTask.onComplete;
     print(storageTaskSnapshot.ref.getDownloadURL());
     return storageTaskSnapshot.ref.getDownloadURL();
@@ -784,7 +932,6 @@ class _PostSecondScreenState extends State<PostSecondScreen>{
       print((await resultList[0].getByteData()));
       print((await resultList[0].metadata));
       print("loadAssets is called");
-
     } on Exception catch (e) {
       error = e.toString();
       print(error);
@@ -793,7 +940,7 @@ class _PostSecondScreenState extends State<PostSecondScreen>{
     // If the widget was removed from the tree while the asynchronous platform
     // message was in flight, we want to discard the reply rather than calling
     // setState to update our non-existent appearance.
-    if (!mounted){
+    if (!mounted) {
       print("Not mounted");
     }
     else {
@@ -841,14 +988,15 @@ class _PostSecondScreenState extends State<PostSecondScreen>{
                             border: OutlineInputBorder(),
                             labelText: 'Build Year:',
 
-                            errorText: _validate ? 'Value can,t be empty':null,
+                            errorText: _validate
+                                ? 'Value can,t be empty'
+                                : null,
 
                             alignLabelWithHint: false,
                             filled: true,
                           ),
 
                           textInputAction: TextInputAction.done,
-
 
 
                         ),
@@ -868,7 +1016,9 @@ class _PostSecondScreenState extends State<PostSecondScreen>{
                           decoration: InputDecoration(
                             border: OutlineInputBorder(),
                             labelText: 'Parking Space:',
-                            errorText: _validate ? 'Value can,t be empty':null,
+                            errorText: _validate
+                                ? 'Value can,t be empty'
+                                : null,
                             alignLabelWithHint: false,
                             filled: true,
                           ),
@@ -898,7 +1048,9 @@ class _PostSecondScreenState extends State<PostSecondScreen>{
                           decoration: InputDecoration(
                             border: OutlineInputBorder(),
                             labelText: 'Rooms:',
-                            errorText: _validate ? 'Value can,t be empty':null,
+                            errorText: _validate
+                                ? 'Value can,t be empty'
+                                : null,
                             alignLabelWithHint: false,
                             filled: true,
                           ),
@@ -921,7 +1073,9 @@ class _PostSecondScreenState extends State<PostSecondScreen>{
                           decoration: InputDecoration(
                             border: OutlineInputBorder(),
                             labelText: 'Bathrooms:',
-                            errorText: _validate ? 'Value can,t be empty':null,
+                            errorText: _validate
+                                ? 'Value can,t be empty'
+                                : null,
                             alignLabelWithHint: false,
                             filled: true,
                           ),
@@ -952,7 +1106,9 @@ class _PostSecondScreenState extends State<PostSecondScreen>{
                           decoration: InputDecoration(
                             border: OutlineInputBorder(),
                             labelText: 'Kitchens:',
-                            errorText: _validate ? 'Value can,t be empty':null,
+                            errorText: _validate
+                                ? 'Value can,t be empty'
+                                : null,
                             alignLabelWithHint: false,
                             filled: true,
                           ),
@@ -975,7 +1131,9 @@ class _PostSecondScreenState extends State<PostSecondScreen>{
                           decoration: InputDecoration(
                             border: OutlineInputBorder(),
                             labelText: 'Floors:',
-                            errorText: _validate ? 'Value can,t be empty':null,
+                            errorText: _validate
+                                ? 'Value can,t be empty'
+                                : null,
                             alignLabelWithHint: false,
                             filled: true,
                           ),
@@ -995,7 +1153,6 @@ class _PostSecondScreenState extends State<PostSecondScreen>{
       ),
     );
   }
-
 
 
   Widget _showExpansionListPlot() {
@@ -1127,7 +1284,7 @@ class _PostSecondScreenState extends State<PostSecondScreen>{
                     Container(
                       width: 130,
                       height: 50,
-                      margin: const EdgeInsets.only(left:33,top: 12),
+                      margin: const EdgeInsets.only(left: 33, top: 12),
                       child: Checkbox(
                         onChanged: (bool value) {
                           setState(() => this._checkBoxVal4 = value);
@@ -1214,7 +1371,7 @@ class _PostSecondScreenState extends State<PostSecondScreen>{
                     Container(
                       width: 130,
                       height: 50,
-                      margin: const EdgeInsets.only( top: 12,),
+                      margin: const EdgeInsets.only(top: 12,),
                       child: Checkbox(
                         onChanged: (bool value) {
                           setState(() => this._checkBoxVal7 = value);
@@ -1290,11 +1447,13 @@ class _PostSecondScreenState extends State<PostSecondScreen>{
                         height: 50,
                         margin: const EdgeInsets.all(8.0),
                         child: TextField(
-                          controller:buildYear,
+                          controller: buildYear,
                           decoration: InputDecoration(
                             border: OutlineInputBorder(),
                             labelText: 'Build Year:',
-                            errorText: _validate ? 'Value can,t be empty':null,
+                            errorText: _validate
+                                ? 'Value can,t be empty'
+                                : null,
                             alignLabelWithHint: false,
                             filled: true,
                           ),
@@ -1315,7 +1474,9 @@ class _PostSecondScreenState extends State<PostSecondScreen>{
                           decoration: InputDecoration(
                             border: OutlineInputBorder(),
                             labelText: 'Parking Space:',
-                            errorText: _validate ? 'Value can,t be empty':null,
+                            errorText: _validate
+                                ? 'Value can,t be empty'
+                                : null,
                             alignLabelWithHint: false,
                             filled: true,
                           ),
@@ -1340,11 +1501,13 @@ class _PostSecondScreenState extends State<PostSecondScreen>{
                         height: 50,
                         margin: const EdgeInsets.all(8.0),
                         child: TextField(
-                          controller:Rooms,
+                          controller: Rooms,
                           decoration: InputDecoration(
                             border: OutlineInputBorder(),
                             labelText: 'Rooms:',
-                            errorText: _validate ? 'Value can,t be empty':null,
+                            errorText: _validate
+                                ? 'Value can,t be empty'
+                                : null,
                             alignLabelWithHint: false,
                             filled: true,
                           ),
@@ -1361,12 +1524,14 @@ class _PostSecondScreenState extends State<PostSecondScreen>{
                         height: 50,
                         margin: const EdgeInsets.all(8.0),
                         child: TextField(
-                          controller:Floors ,
+                          controller: Floors,
 
                           decoration: InputDecoration(
                             border: OutlineInputBorder(),
                             labelText: 'Floors:',
-                            errorText: _validate ? 'Value can,t be empty':null,
+                            errorText: _validate
+                                ? 'Value can,t be empty'
+                                : null,
                             alignLabelWithHint: false,
                             filled: true,
                           ),
@@ -1397,7 +1562,9 @@ class _PostSecondScreenState extends State<PostSecondScreen>{
                           decoration: InputDecoration(
                             border: OutlineInputBorder(),
                             labelText: 'Flooring:',
-                            errorText: _validate ? 'Value can,t be empty':null,
+                            errorText: _validate
+                                ? 'Value can,t be empty'
+                                : null,
                             alignLabelWithHint: false,
                             filled: true,
                           ),
@@ -1539,11 +1706,12 @@ class _PostSecondScreenState extends State<PostSecondScreen>{
           // Flooring  text field goes here
 
 
-
         ],
       ),
     );
   }
+
+
   Widget _hideExpansionList() {
     return Visibility(
       visible: false,
@@ -1555,7 +1723,9 @@ class _PostSecondScreenState extends State<PostSecondScreen>{
           title: Text(
             "Choose Main Features",
             style: TextStyle(
-                fontWeight: FontWeight.bold, fontSize: 16, color: Colors.black45),
+                fontWeight: FontWeight.bold,
+                fontSize: 16,
+                color: Colors.black45),
           ),
           trailing: Icon(
             Icons.arrow_drop_down_circle,
@@ -1565,6 +1735,5 @@ class _PostSecondScreenState extends State<PostSecondScreen>{
       ),
     );
   }
-
 
 }

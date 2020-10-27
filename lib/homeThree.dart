@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:signup/MainScreenUsers.dart';
 import 'package:signup/agentSignup.dart';
 import 'package:signup/main_screen.dart';
+import 'package:signup/screens/editProfile.dart';
 import 'package:signup/signup.dart';
 import 'package:signup/userProfile.dart';
 
@@ -79,7 +80,7 @@ class _RoleCheckThreeState extends State<RoleCheckThree> {
       //isAdmin =true;
       print('agent');
       //MainScreen(isAdmin: true,);
-      return AgentSignUp(
+      return EditProfile(
         isAgent: true,
       );
       //return MainScreen(isAdmin);
@@ -88,7 +89,7 @@ class _RoleCheckThreeState extends State<RoleCheckThree> {
       //isAdmin= false;
       print('other');
       //return MainScreen();
-      return AgentSignUp(
+      return EditProfile(
         isAgent: false,
       );
     }

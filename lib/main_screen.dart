@@ -564,6 +564,7 @@ class _MainScreenState extends State<MainScreen> {
 
                         String _returnString =
                         await _currentUser.signOut();
+
                         if (_returnString == 'Success') {
                           Navigator.pushAndRemoveUntil(
                             context,

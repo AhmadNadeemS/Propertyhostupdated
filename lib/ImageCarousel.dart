@@ -7,8 +7,10 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:signup/AppLogic/validation.dart';
 import 'package:signup/Arguments.dart';
+import 'package:signup/models/Adpost.dart';
+import 'package:signup/screens/editPost.dart';
+import 'package:signup/screens/postscreen1.dart';
 import 'package:signup/services/MakeBid.dart';
-import 'package:signup/services/PostAdCreation.dart';
 import 'package:signup/services/chatDatabase.dart';
 import './widgets/TextIcon.dart';
 import 'chat/chat.dart';
@@ -19,13 +21,10 @@ class ImageCarousel extends StatefulWidget {
   static const routeName = '/ImageCarousel';
   @override
   _ImageCarouselState createState() => _ImageCarouselState();
-//  String name;
-//  double bid;
-//  int number;
-//  ImageCarousel({this.name,this.number,this.bid});
-//
+
 
 }
+
 
 class _ImageCarouselState extends State<ImageCarousel>{
 
@@ -38,9 +37,11 @@ class _ImageCarouselState extends State<ImageCarousel>{
   List<Image> _listOfImages = <Image>[];
   bool isLoading = false;
   chatdatabase Chatdatabase = new chatdatabase();
- String postId;
+
+  AdPost _adPost = new AdPost();
   String data =
       "https://thumbs.dreamstime.com/b/user-profile-avatar-icon-134114292.jpg";
+
   @override
   void initState() {
 
@@ -59,30 +60,25 @@ class _ImageCarouselState extends State<ImageCarousel>{
   String name;
   double bid;
   int number;
+  String postId;
+
   GlobalKey<FormState> _key = new GlobalKey();
+  final navigaterKey = GlobalKey<NavigatorState>();
   PostBidFirebase createBid = PostBidFirebase();
+
+
 
   @override
   Widget build(BuildContext context) {
+
     final ScreenArguments args = ModalRoute.of(context).settings.arguments;
     postId = args.PostId;
-//
-//    Widget imageSliderCarousel = Container(
-//      height: 200,
-//      child: Carousel(
-//        boxFit: BoxFit.fill,
-//        images: [
-//          AssetImage('assets/1.jpg'),
-//          AssetImage('assets/2.jpg'),
-//          AssetImage('assets/3.jpg'),
-//        ],
-//        autoplay: false,
-//        indicatorBgPadding: 1.0,
-//        dotSize: 4.0,
-//        dotColor: Colors.blue,
-//        dotBgColor: Colors.transparent,
-//      ),
-//    );
+
+    // This is the type used by the popup menu below.
+
+
+
+
     createAlertDialog(BuildContext context) {
       TextEditingController _phoneController = TextEditingController();
       final TextEditingController _firstName = TextEditingController();
@@ -164,24 +160,6 @@ class _ImageCarouselState extends State<ImageCarousel>{
                 MaterialButton(
                   elevation: 5.0,
                   child: Text('Make Offer'),
-//                  onPressed: () async {
-//                    _validate = true;
-//                    var firebaseUser = await FirebaseAuth.instance.currentUser();
-//                    if (_sendToServer()) {
-//
-//                      _firestore.collection("BidList").document(firebaseUser.uid).setData({
- //                       "displayName": _firstName.text,
-//                     //   "age": _age.text,
-//                     //   'phoneNumber' : _phoneController.text,
-//                    //    "address": _location.text,
-//                    //    "description": _description.text,
-//                      });
-//                      Navigator.pop(context);
-//                      _validate = false;
-//                      return true;
-//                    }
-//
-//                    Navigator.pop(context);
             onPressed: (){
             _validate = true;
             if (_sendToServer()) {
@@ -292,10 +270,66 @@ class _ImageCarouselState extends State<ImageCarousel>{
     }
 
 
-    return SafeArea(
-      child: Scaffold(
+    deletePostAlert(BuildContext context) {
+
+      return showDialog(
+          context: context,
+          builder: (context) {
+
+            return AlertDialog(
+              title: Text('Are you Sure you Want to Delete the Post?'),
+              content: Form(
+                key: _key,
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: SingleChildScrollView(
+                    child: Column(
+                      children: [
+
+                        Container(
+
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+              actions: <Widget>[
+                MaterialButton(
+                  elevation: 5.0,
+                  child: Text('Delete'),
+                  onPressed: () {
+                    print("delete button is called post id is"+args.PostId);
+
+                 //   chatdatabase().removePost(args.PostId);
+
+                    Navigator.pushNamed(context, "/ViewAdds");
+                    
+
+                  },
+                ),
+                MaterialButton(
+                  elevation: 5.0,
+                  child: Text('Cancel'),
+                  onPressed: (){
+                    Navigator.pop(context);
+                  },
+                )
+              ],
+            );
+          });
+    }
+
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      navigatorKey: navigaterKey,
+
+      home: Scaffold(
+
         //  backgroundColor: Colors.blue[800],
         appBar: AppBar(
+
+
           flexibleSpace: Container(
             decoration: BoxDecoration(
               gradient: LinearGradient(
@@ -305,6 +339,8 @@ class _ImageCarouselState extends State<ImageCarousel>{
                     Colors.black.withOpacity(.2),
                   ]
               ),
+
+
 //                gradient: LinearGradient(
 //                  //     colors: [Colors.deepPurple, Colors.purple], stops: [0.5, 1.0],
 //                  colors: [Colors.deepPurple, Color(0xff2470c7)],
@@ -320,16 +356,52 @@ class _ImageCarouselState extends State<ImageCarousel>{
             ),
           ),
           //backgroundColor: Colors.grey[800],
+
           title: Text("Ad Details"),
           centerTitle: true,
+          leading: new IconButton(
+            icon: new Icon(Icons.arrow_back),
+            onPressed: () => Navigator.of(context).pop(),
+          ),
+          
+          actions: <Widget> [
+
+          PopupMenuButton(
+            itemBuilder: (content) =>[
+              PopupMenuItem(
+                value:1,
+                child: Text("Edit"),
+              ),
+              PopupMenuItem(
+                value: 2,
+                child: Text("Delete"),
+              )
+            ],
+            onSelected: (int menu){
+              if(menu ==  1){
+                navigaterKey.currentState.push(MaterialPageRoute(builder: (context)=> EditPost(adPost:_adPost)));
+
+              }
+              else if(menu == 2){
+
+              deletePostAlert(context);
+
+
+
+              }
+
+              },
+          )
+
+          ],
         ),
+
         body: user != null ? Container(
           child:
           //stream: Firestore.instance.collection('PostAdd').document(Pos)
           StreamBuilder(
-            stream: Firestore.instance.collection('PostAdd').where("PostID",isEqualTo: args.PostId).snapshots(),            //stream: Firestore.instance.collection('PostAdd').document(PostId).snapshots(),
-            //stream: Firestore.instance.collection('PostAdd').where("uid", isEqualTo: Firestore.instance.collection("PostAdd").document('uid').collection(PostId)).snapshots;
-            //stream: Firestore.instance.collection('PostAdd').document("uid").collection(PostId).snapshots(),
+            stream: Firestore.instance.collection('PostAdd').where("PostID",isEqualTo: args.PostId).snapshots(),
+
             builder:
                 (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
               if (snapshot.hasData) {
@@ -340,6 +412,15 @@ class _ImageCarouselState extends State<ImageCarousel>{
 
                   itemBuilder: (BuildContext context, int index) {
                     _listOfImages = [];
+                    _adPost.title = snapshot.data.documents[index].data['Title'];
+                    _adPost.desc = snapshot.data.documents[index].data['Description'];
+                    _adPost.price = snapshot.data.documents[index].data['Price'];
+                    _adPost.Address = snapshot.data.documents[index].data['Address']['Street'];
+                    _adPost.AvailDays = snapshot.data.documents[index].data['Available Days'];
+                    _adPost.City = snapshot.data.documents[index].data['Address']['city'];
+                    _adPost.time = snapshot.data.documents[index].data['Meeting Time'];
+                    _adPost.propertySize=snapshot.data.documents[index].data['Property Size'];
+
                     for (int i = 0;
                     i < snapshot.data.documents[index].data['Image Urls'].length;
                     i++
@@ -395,8 +476,7 @@ class _ImageCarouselState extends State<ImageCarousel>{
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: <Widget>[
-                              Text(
-                                snapshot
+                              Text(snapshot
                                     .data.documents
                                     .elementAt(index)['Title'],
                                 style: Theme
@@ -466,7 +546,7 @@ class _ImageCarouselState extends State<ImageCarousel>{
                               Padding(
                                 padding: const EdgeInsets.symmetric(vertical: 16.0),
                                 child: Text(
-                                  snapshot
+                                 _adPost.desc = snapshot
                                       .data.documents
                                       .elementAt(index)['Description'],style: TextStyle(color: Colors.grey),),
                               ),
@@ -549,9 +629,7 @@ class _ImageCarouselState extends State<ImageCarousel>{
                                               width: 50,
                                             ),
 
-                                            Text(snapshot
-                                                .data.documents
-                                                .elementAt(index)['Price'].toString()),
+                                            Text(snapshot.data.documents.elementAt(index)['Price'].toString()),
                                           ],
                                         ),
                                       ),
@@ -580,7 +658,7 @@ class _ImageCarouselState extends State<ImageCarousel>{
                                             Flexible(
                                                 child: Text(   snapshot
                                                     .data.documents
-                                                    .elementAt(index)['Address']["location"])),
+                                                    .elementAt(index)['Address']["Street"])),
                                           ],
                                         ),
                                       ),
@@ -1108,84 +1186,6 @@ class _ImageCarouselState extends State<ImageCarousel>{
                                         ),
                                       ),
                                     ):SizedBox.shrink(),
-//                                  Container(
-//                                    height: 50,
-//                                    color: Colors.grey[100],
-//                                    child: Padding(
-//                                      padding: const EdgeInsets.all(8.0),
-//                                      child: Row(
-//                                        mainAxisAlignment: MainAxisAlignment.start,
-//                                        //crossAxisAlignment: CrossAxisAlignment.center,
-//                                        children: <Widget>[
-//                                          //                             Icon(Icons.schedule,),
-//                                          Container(
-//                                              width: 100,
-//                                              child: Text(
-//                                                'Drawing Room: ',
-//                                                style: TextStyle(
-//                                                    fontWeight: FontWeight.bold),
-//                                              )),
-//                                          SizedBox(
-//                                            width: 50,
-//                                          ),
-//
-//                                          Text('Yes'),
-//                                        ],
-//                                      ),
-//                                    ),
-//                                  ),
-//                                  Container(
-//                                    height: 50,
-//                                    color: Colors.grey[100],
-//                                    child: Padding(
-//                                      padding: const EdgeInsets.all(8.0),
-//                                      child: Row(
-//                                        mainAxisAlignment: MainAxisAlignment.start,
-//                                        //crossAxisAlignment: CrossAxisAlignment.center,
-//                                        children: <Widget>[
-//                                          //                             Icon(Icons.schedule,),
-//                                          Container(
-//                                              width: 100,
-//                                              child: Text(
-//                                                'Dining Room: ',
-//                                                style: TextStyle(
-//                                                    fontWeight: FontWeight.bold),
-//                                              )),
-//                                          SizedBox(
-//                                            width: 50,
-//                                          ),
-//
-//                                          Text('2'),
-//                                        ],
-//                                      ),
-//                                    ),
-//                                  ),
-//                                  Container(
-//                                    height: 50,
-//                                    color: Colors.grey[100],
-//                                    child: Padding(
-//                                      padding: const EdgeInsets.all(8.0),
-//                                      child: Row(
-//                                        mainAxisAlignment: MainAxisAlignment.start,
-//                                        //crossAxisAlignment: CrossAxisAlignment.center,
-//                                        children: <Widget>[
-//                                          //                             Icon(Icons.schedule,),
-//                                          Container(
-//                                              width: 100,
-//                                              child: Text(
-//                                                'Furnished: ',
-//                                                style: TextStyle(
-//                                                    fontWeight: FontWeight.bold),
-//                                              )),
-//                                          SizedBox(
-//                                            width: 50,
-//                                          ),
-//
-//                                          Text('No'),
-//                                        ],
-//                                      ),
-//                                    ),
-//                                  ),
                                     snapshot
                                         .data.documents.elementAt(index)['Main Features']['Flooring']!=null?Container(
                                       height: 50,

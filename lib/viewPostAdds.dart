@@ -259,7 +259,7 @@ class _ViewAddsState extends State<ViewAdds> with SingleTickerProviderStateMixin
                               ),
                             );
                           } else {
-                            return CircularProgressIndicator();
+                            return Center(child:CircularProgressIndicator());
 //              return Center(
 //                child: Text('Loading...'),
 //              );

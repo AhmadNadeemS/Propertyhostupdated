@@ -14,6 +14,7 @@ import 'package:signup/homeThree.dart';
 import 'package:signup/homeTwo.dart';
 import 'package:signup/main_screen.dart';
 import 'package:signup/myProfile.dart';
+import 'package:signup/screens/editProfile.dart';
 import 'package:signup/screens/postscreen1.dart';
 import 'package:signup/states/currentUser.dart';
 import 'package:signup/userProfile.dart';
@@ -52,9 +53,10 @@ class HomePage extends StatelessWidget {
           '/mainScreenUser': (context) => MainScreenUsers(),
           '/LoginScreen': (context) => LoginPage(),
           '/MyProfile': (context) => MyProfile(),
+          'EditProfile': (context) => EditProfile(),
           '/Signup': (context) => SignUpPage(),
           '/ViewAdds': (context) => ViewAdds(),
-          '/PostDetail': (context) => PostDetail(),
+       //   '/PostDetail': (context) => PostDetail(),
           '/postscreen1': (context) => PostFirstScreen(),
           '/choseOnMap': (context) => ChoseOnMap(),
           '/AgentSignup': (context) => AgentSignUp(),

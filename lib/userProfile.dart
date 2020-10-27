@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:signup/comments.dart';
+import 'package:signup/screens/editProfile.dart';
 
 class UserProfile extends StatefulWidget {
   final bool isAgent;
@@ -717,13 +718,16 @@ class _UserProfileState extends State<UserProfile> {
                                     ),
                                   ),
                                   //   _editProfileButton(),
-                                  snapshot
-                                      .data.documents.elementAt(index)['User Type']=="Agent" ?
+                                //  snapshot
+                                 //     .data.documents.elementAt(index)['User Type']=="Agent" ?
                                   Container(
                                     child: Center(
                                       child: FlatButton(
                                         onPressed: () {
-                                          Navigator.pushNamed(context, '/AgentSignup');
+                                        //  Navigator.pushNamed(context, '/EditProfile');
+                                          Navigator.push(context, new MaterialPageRoute(
+                                              builder: (context) => EditProfile())
+                                          );
                                         },
                                         child: Container(
                                           height: 50,
@@ -742,31 +746,31 @@ class _UserProfileState extends State<UserProfile> {
                                         ),
                                       ),
                                     ),
-                                  )
-                                      :Container(
-                                      child: Center(
-                                        child: FlatButton(
-                                          onPressed: () {
-                                            Navigator.pushNamed(context, '/AgentSignup');
-                                          },
-                                          child: Container(
-                                            height: 50,
-                                            width: 170,
-                                            decoration: BoxDecoration(
-                                                color: Colors.grey[800],
-                                                borderRadius: BorderRadius.circular(10)),
-                                            child: Center(
-                                              child: Text(
-                                                "Edit Profile",
-                                                style:
-                                                TextStyle(color: Colors.white,
-                                                    fontWeight: FontWeight.bold),
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                      ),
                                   ),
+//                                      :Container(
+//                                      child: Center(
+//                                        child: FlatButton(
+//                                          onPressed: () {
+//                                            Navigator.pushNamed(context, '/EditProfile');
+//                                          },
+//                                          child: Container(
+//                                            height: 50,
+//                                            width: 170,
+//                                            decoration: BoxDecoration(
+//                                                color: Colors.grey[800],
+//                                                borderRadius: BorderRadius.circular(10)),
+//                                            child: Center(
+//                                              child: Text(
+//                                                "Edit Profile",
+//                                                style:
+//                                                TextStyle(color: Colors.white,
+//                                                    fontWeight: FontWeight.bold),
+//                                              ),
+//                                            ),
+//                                          ),
+//                                        ),
+//                                      ),
+//                                  ),
 //                                    :Container(
 //                      margin: EdgeInsets.only(top: 60),
 //                      child: Center(

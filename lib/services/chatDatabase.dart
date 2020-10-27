@@ -13,6 +13,26 @@ class chatdatabase {
     });
   }
 
+  removeChat({String chatRoomId, String messageId}) {
+    Firestore.instance
+        .collection("chatRoom")
+        .document(chatRoomId)
+        .collection("Chats")
+        .document(messageId)
+        .delete();
+  }
+
+  removePost(String PostId) async{
+   await Firestore.instance
+        .collection("PostAdd")
+        .document(PostId)
+        .delete();
+
+    print("Post deleted with id" + PostId);
+
+  }
+
+
   searchByName(String searchField) {
     return Firestore.instance
         .collection("users")
