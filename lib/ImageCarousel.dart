@@ -420,6 +420,7 @@ class _ImageCarouselState extends State<ImageCarousel>{
                     _adPost.City = snapshot.data.documents[index].data['Address']['city'];
                     _adPost.time = snapshot.data.documents[index].data['Meeting Time'];
                     _adPost.propertySize=snapshot.data.documents[index].data['Property Size'];
+                    _adPost.postId = args.PostId;
 
                     for (int i = 0;
                     i < snapshot.data.documents[index].data['Image Urls'].length;

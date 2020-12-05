@@ -1,25 +1,54 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:signup/main_screen.dart';
+import 'package:signup/models/user.dart';
+import 'package:signup/services/database.dart';
 import 'package:signup/states/currentUser.dart';
-import 'package:signup/widgets/otp_screen.dart';
 
+//import 'package:property_host_system/http_exception.dart';
+import './AppLogic/validation.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:provider/provider.dart';
-class SignUpPage extends StatefulWidget {
+class UserDetail extends StatefulWidget {
+
+  final String  mobileNumber;
+
+  const UserDetail({Key key, this.mobileNumber}) : super(key: key);
   @override
-  _LoginPageState createState() => _LoginPageState();
+  _UserDetail createState() => _UserDetail(this.mobileNumber);
 }
 
-class _LoginPageState extends State<SignUpPage> {
-  FirebaseAuth _auth = FirebaseAuth.instance;
+class _UserDetail extends State<UserDetail> {
+ final FirebaseAuth _auth = FirebaseAuth.instance;
   FirebaseUser loggedInUser;
   var _isLoading = false;
+  String mobileNumber="";
+  OurUser Ouruser= new OurUser();
+  FirebaseUser user;
+  _UserDetail(this.mobileNumber);
+
   @override
   void initState(){
     super.initState();
-    getCurrentUser();
+    print(widget.mobileNumber);
+    initUser();
+    //getCurrentUser();
   }
+
+  initUser() async{
+    user = await _auth.currentUser();
+
+    if (user != null) {
+      Ouruser.uid = user.uid;
+      print("${Ouruser.uid}");
+    } else {
+      print("user.uid");
+      // User is not available. Do something else
+    }
+    setState(() {});
+  }
+
   void _showErrorDialog(String message) {
     showDialog(
       context: context,
@@ -45,50 +74,16 @@ class _LoginPageState extends State<SignUpPage> {
   final TextEditingController _lastName = TextEditingController();
   final TextEditingController _title = TextEditingController();
   final TextEditingController _age = TextEditingController();
-  final TextEditingController _location = TextEditingController();
+  final TextEditingController _Address = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
   final TextEditingController _emailAddress = TextEditingController();
   final TextEditingController _description = TextEditingController();
   final TextEditingController _passwordTextController = TextEditingController();
   final TextEditingController _confirmPasswordController = TextEditingController();
   final TextEditingController _role = TextEditingController();
-  String _FName,_LName, _phoneNumber, _email, _password,_confirmPassword;
+  String _FName, Address, _phoneNumber, _email, _password,_confirmPassword;
 
-  void _signUpUser(String email, String password, BuildContext context,String firstName, String title,String age,String location,String description,String phoneNumber,String role) async {
-    //final _auth = FirebaseAuth.instance;
-    CurrentUser _currentUser = Provider.of<CurrentUser>(context,listen: false);
 
-    _sendToServer();
-    try{
-      String _returnString = await _currentUser.signUpUser(email, password,firstName,title,age,location,description,phoneNumber,role);
-      if(_returnString == 'Success')
-      {
-        Navigator.pushNamed(context, '/OTPScreen');
-      }
-      else
-      {
-        Scaffold.of(context).showSnackBar(
-          SnackBar(
-            content: Text(_returnString),
-            duration: Duration(seconds: 2),
-          ),
-        );
-      }
-    }
-    catch (e) {
-      print(e);
-    }
-  }
-  Future<Null> validate(StateSetter updateState) async {
-    print("in validate : ${_phoneNumberController.text.length}");
-    if (_phoneNumberController.text.length == 10) {
-      updateState(() {
-        isValid = true;
-      });
-    }
-  }
-  final TextEditingController _phoneNumberController = TextEditingController();
-  bool isValid = false;
 //    catch (error) {
 //      // const errorMessage =
 //      //   'Could not authenticate you. Please try again later.';
@@ -106,20 +101,6 @@ class _LoginPageState extends State<SignUpPage> {
 //        );
 //      }
 
-  void getCurrentUser() async{
-    try{
-      final user = await _auth.currentUser();
-      if(user != null)
-      {
-        loggedInUser = user;
-        print(loggedInUser.email);
-      }
-    }
-    catch(e)
-    {
-      print(e);
-    }
-  }
   GlobalKey<FormState> _key = new GlobalKey();
   bool _validate = false;
 
@@ -143,131 +124,160 @@ class _LoginPageState extends State<SignUpPage> {
   }
 
   Widget _buildSignUpForm() {
-    return StatefulBuilder(builder:
-        (BuildContext context, StateSetter state) {
-      return Form(
+    return Form(
       key: _key,
       child: Padding(
-      padding: EdgeInsets.all(8),
-      child: Column(
-      children: <Widget>[
-      Container(
-      child: TextFormField(
-      keyboardType: TextInputType.number,
-      controller: _phoneNumberController,
-      autofocus: false,
-      onChanged: (text) {
-      validate(state);
-      },
-      decoration: InputDecoration(
-      //labelText: "11 digit mobile number",
-      prefix: Container(
-      padding: EdgeInsets.all(4.0),
-      child: Text(
-      "+92",
-      style: TextStyle(
-      color: Colors.black,
-      fontWeight: FontWeight.bold),
-      ),
-      ),
-      ),
-      autovalidate: true,
-      autocorrect: false,
-      maxLengthEnforced: true,
-      validator: (value) {
-      return !isValid
-      ? 'Please provide a valid 11 digit phone number'
-          : null;
-      },
-      ),
+        padding: EdgeInsets.all(8),
+        child: Column(
+          children: <Widget>[
+            Container(
+              child: TextFormField(
+                controller: _firstName,
+                keyboardType: TextInputType.text,
+                validator: validateName,
+                onSaved: (String val){
+                  _FName = val;
+                  print(_FName);
+                },
 
-//      TextFormField(
-//      controller: _passwordTextController,
-//      decoration: InputDecoration(
-//      prefixIcon: Icon(
-//      Icons.lock,
-//      color: Colors.grey[800],
-//      ),
-//      labelText: 'Password',
-//      ),
-//      obscureText: true,
-//      // ignore: missing_return
-//      validator: (String value) {
-//      if (value.isEmpty || value.length < 6) {
-//      return 'Password invalid';
-//      }
-//      },
-//      onSaved: (String value) {
-//      _password = value;
-//      },
-//      ),
-//      TextFormField(
-//      controller: _confirmPasswordController,
-//      decoration: InputDecoration(
-//      prefixIcon: Icon(
-//      Icons.lock,
-//      color: Colors.grey[800],
-//      ),
-//      labelText: 'Confirm Password',
-//      ),
-//      obscureText: true,
-//      // ignore: missing_return
-//      validator: (String value) {
-//      if (_passwordTextController.text != value) {
-//      return 'Passwords do not match.';
-//      }
-//      },
-//      ),
-      ),
-      ],
-      ),
-      ),
-      );
+                decoration: InputDecoration(
+                    prefixIcon: Icon(
+                      Icons.account_circle,
+                      color: Colors.grey[800],
+                    ),
+                    labelText: 'Enter Full Name'),
+              ),
 
-      });
-
+            ),
+         /*   TextFormField(
+              controller: _phoneController,
+              keyboardType: TextInputType.phone,
+              maxLength: 11,
+              validator:validateMobile,
+              onSaved: (String val){
+                _phoneNumber = val;
+                print(_phoneNumber);
+              },
+              decoration: InputDecoration(
+                  prefixIcon: Icon(
+                    Icons.phone,
+                    color: Colors.grey[800],
+                  ),
+                  labelText: 'Phone No'),
+            ),
+             TextFormField(
+              controller: _Address,
+              keyboardType: TextInputType.emailAddress,
+              validator:validateName,
+              onSaved: (String val){
+                Address = val;
+              },
+              decoration: InputDecoration(
+                prefixIcon: Icon(
+                  Icons.email,
+                  color: Colors.grey[800],
+                ),
+                labelText: 'Address',
+              ),
+            ),*/
+          /*  TextFormField(
+              controller: _emailAddress,
+              keyboardType: TextInputType.emailAddress,
+              validator:validateEmail,
+              onSaved: (String val){
+                _email = val;
+              },
+              decoration: InputDecoration(
+                prefixIcon: Icon(
+                  Icons.email,
+                  color: Colors.grey[800],
+                ),
+                labelText: 'Email',
+              ),
+            ),*/
+          /*  TextFormField(
+              controller: _passwordTextController,
+              decoration: InputDecoration(
+                prefixIcon: Icon(
+                  Icons.lock,
+                  color: Colors.grey[800],
+                ),
+                labelText: 'Password',
+              ),
+              obscureText: true,
+              // ignore: missing_return
+              validator: (String value) {
+                if (value.isEmpty || value.length < 6) {
+                  return 'Password invalid';
+                }
+              },
+              onSaved: (String value) {
+                _password = value;
+              },
+            ),
+            TextFormField(
+              controller: _confirmPasswordController,
+              decoration: InputDecoration(
+                prefixIcon: Icon(
+                  Icons.lock,
+                  color: Colors.grey[800],
+                ),
+                labelText: 'Confirm Password',
+              ),
+              obscureText: true,
+              // ignore: missing_return
+              validator: (String value) {
+                if (_passwordTextController.text != value) {
+                  return 'Passwords do not match.';
+                }
+              },
+            ),*/
+          ],
+        ),
+      ),
+    );
   }
-//  Widget _buildLoginBtn() {
-//    return Row(
-//      mainAxisAlignment: MainAxisAlignment.center,
-//      children: <Widget>[
-//        Padding(
-//          padding: EdgeInsets.only(top: 2),
-//          child: FlatButton(
-//            onPressed: () {
-//              Navigator.pushNamed(context, '/LoginScreen');
-//            },
-//            child: RichText(
-//              text: TextSpan(children: [
-//                TextSpan(
-//                  text: 'Switch back to? ',
-//                  style: TextStyle(
-//                    color: Colors.white,
-//                    fontSize: MediaQuery
-//                        .of(context)
-//                        .size
-//                        .height / 40,
-//                    fontWeight: FontWeight.w400,
-//                  ),
-//                ),
-//                TextSpan(
-//                  text: 'Login In',
-//                  style: TextStyle(
-//                    color: Colors.grey[300],
-//                    fontSize: MediaQuery
-//                        .of(context)
-//                        .size
-//                        .height / 35,
-//                    fontWeight: FontWeight.bold,
-//                  ),
-//                )
-//              ]),
-//            ),
-//          ),
-//        ),
-//      ],
-//    );
-//  }
+  Widget _buildLoginBtn() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: <Widget>[
+        Padding(
+          padding: EdgeInsets.only(top: 2),
+          child: FlatButton(
+            onPressed: () {
+              Navigator.pushNamed(context, '/LoginScreen');
+            },
+            child: RichText(
+              text: TextSpan(children: [
+                TextSpan(
+                  text: 'Switch back to? ',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: MediaQuery
+                        .of(context)
+                        .size
+                        .height / 40,
+                    fontWeight: FontWeight.w400,
+                  ),
+                ),
+                TextSpan(
+                  text: 'Login In',
+                  style: TextStyle(
+                    color: Colors.grey[300],
+                    fontSize: MediaQuery
+                        .of(context)
+                        .size
+                        .height / 35,
+                    fontWeight: FontWeight.bold,
+                  ),
+                )
+              ]),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
 
   _sendToServer(){
     if (_key.currentState.validate()) {
@@ -307,34 +317,25 @@ class _LoginPageState extends State<SignUpPage> {
                   borderRadius: BorderRadius.circular(30.0),
                 ),
 
-                onPressed: () {
+                onPressed: () async{
+                  _sendToServer();
 
+                  Ouruser.phoneNumber = widget.mobileNumber;
+                  Ouruser.displayName = _FName;
 
-                  if (_phoneNumberController.text!=null)
-                  {
-                   /* _signUpUser(
-                        _emailAddress.text, _passwordTextController.text,
-                        context, _firstName.text,_title.text,_age.text,_location.text,_description.text
-                        ,_phoneNumberController.text,_role.text);*/
-                    Navigator.push(
-                                                      context,
-                                                      MaterialPageRoute(
-                                                        builder: (context) =>
-                                                            OTPScreen(
-                                                              mobileNumber:
-                                                              _phoneNumberController
-                                                                  .text,
-                                                            ),
-                                                      ));
-                                              }
-                                           else {
-                    Scaffold.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text("Error"),
-                        duration: Duration(seconds: 2),
-                      ),
-                    );
-                  }
+               String retString =  await  OurDatabase().createUser(Ouruser);
+               if(retString =='Success'){
+                 Navigator.pushAndRemoveUntil(
+                   context,
+                   MaterialPageRoute(
+                       builder: (context) => MainScreen(
+                         isAgent: false,
+                       )),
+                       (route) => false,
+                 );
+               }
+                  
+
                 },
 
 //              catch(e)
@@ -357,7 +358,7 @@ class _LoginPageState extends State<SignUpPage> {
 
 
                 child: Text(
-                  "Continue",
+                  "Sign up",
                   style: TextStyle(
                     color: Colors.white,
                     letterSpacing: 1.5,
@@ -439,6 +440,7 @@ class _LoginPageState extends State<SignUpPage> {
           child: Stack(
             children: <Widget>[
               Container(
+
                 height: MediaQuery.of(context).size.height,
                 width: MediaQuery.of(context).size.width,
                 child: Container(
@@ -447,13 +449,16 @@ class _LoginPageState extends State<SignUpPage> {
                   ),
                 ),
               ),
-              Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  _buildLogo(),
-                  _buildContainer(),
-              //    _buildLoginBtn(),
-                ],
+              Container(
+                margin: EdgeInsets.only(top: 30),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    _buildLogo(),
+                    _buildContainer(),
+                //    _buildLoginBtn(),
+                  ],
+                ),
               ),
             ],
           ),

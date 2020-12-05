@@ -5,7 +5,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
+import 'package:signup/models/AgentUser.dart';
 import 'package:signup/models/user.dart';
+import 'package:signup/services/agentDatabase.dart';
 import 'package:signup/states/currentUser.dart';
 import './AppLogic/validation.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -27,6 +29,7 @@ class _AgentSignUpState extends State<AgentSignUp> {
   File _imageFile;
   final picker = ImagePicker();
   bool isAgent = true;
+  AgentUser agent = AgentUser();
 
   _AgentSignUpState(this.isAgent);
 
@@ -48,23 +51,27 @@ class _AgentSignUpState extends State<AgentSignUp> {
           });
         }
       });
-          }
-          catch(e)
-      {
-        print("data");
-      }
-      }
+    }
+    catch(e)
+    {
+      print("data");
+    }
+  }
 
   void dispose() {
     _firstName.dispose();
     super.dispose();
   }
+
+
 //  Future getImage() async{
 //    final pickedFile = await picker.getImage(source: ImageSource.gallery);
 //    setState(() {
 //      _image = File(pickedFile.path);
 //    });
 //  }
+
+
   final Firestore _firestore = Firestore.instance;
 
 //  Map<String,dynamic> productToAdd;
@@ -83,6 +90,8 @@ class _AgentSignUpState extends State<AgentSignUp> {
 //  }
   //final Firestore _firestore = Firestore.instance;
   //AgentUser _currentUser = AgentUser();
+
+
   String retVal;
 
   //  String _uid;
@@ -90,20 +99,16 @@ class _AgentSignUpState extends State<AgentSignUp> {
 
   OurUser _currentUser = OurUser();
 
-  //  String _uid;
-  //  String _email;
-  //  String _email;
   final FirebaseAuth _auth = FirebaseAuth.instance;
+  //FirebaseUser user;
+  FirebaseUser user;
 
-  OurUser get getCurrentUser => _currentUser;
 
-  //bool userLoggedIn =false;
   Future<FirebaseUser> getUser() {
     return _auth.currentUser();
   }
 
-  //FirebaseUser user;
-  FirebaseUser user;
+
 
   @override
   void initState() {
@@ -129,14 +134,11 @@ class _AgentSignUpState extends State<AgentSignUp> {
   // String get getEmail => _email;
 //  AgentUser _agentUser = AgentUser();
 //  OurUser get getAgentUser => _currentUser;
-  String fName, title, age, location, phoneNumber, email, description;
+ String fName, title, age, location, phoneNumber, email, description;
   final TextEditingController _firstName = TextEditingController();
- // final TextEditingController _lastName = TextEditingController();
-  //final TextEditingController _title = TextEditingController();
   final TextEditingController _age = TextEditingController();
   final TextEditingController _location = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
- // final TextEditingController _emailAddress = TextEditingController();
   final TextEditingController _description = TextEditingController();
 
   //final TextEditingController _passwordTextController = TextEditingController();
@@ -299,29 +301,29 @@ class _AgentSignUpState extends State<AgentSignUp> {
   }
 
   Widget _showName() {
-    return Builder(
+    return user != null ? Builder(
       builder: (BuildContext context) {
         return Form(
           key: _key,
           autovalidate: _validate,
           child: StreamBuilder(
-            stream: Firestore.instance.collection('users').where("uid", isEqualTo:user.uid).snapshots(),
-        builder:
-        (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-          if (snapshot.hasData) {
-            return ListView.builder(
-              //shrinkWrap: true,
-                shrinkWrap: true,  physics: ClampingScrollPhysics(),
-                itemCount: snapshot.data.documents.length,
-                itemBuilder: (BuildContext context, int index) {
-                  return Container(
-                    child: SingleChildScrollView(
-                      child: Column(
-                        children: <Widget>[
-                       //   _showImage(),
-                         // SizedBox(height: 16),
+              stream: Firestore.instance.collection('users').where("uid", isEqualTo:user.uid).snapshots(),
+              builder:
+                  (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+                if (snapshot.hasData) {
+                  return ListView.builder(
+                    //shrinkWrap: true,
+                      shrinkWrap: true,  physics: ClampingScrollPhysics(),
+                      itemCount: snapshot.data.documents.length,
+                      itemBuilder: (BuildContext context, int index) {
+                        return Container(
+                          child: SingleChildScrollView(
+                            child: Column(
+                              children: <Widget>[
+                                //   _showImage(),
+                                // SizedBox(height: 16),
 
-                          //SizedBox(height: 16),
+                                //SizedBox(height: 16),
 //                          _imageFile == null && _imageUrl == null
 //                              ? ButtonTheme(
 //                            child: RaisedButton(
@@ -333,25 +335,25 @@ class _AgentSignUpState extends State<AgentSignUp> {
 //                            ),
 //                          )
 //                              : SizedBox(height: 0),
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: TextFormField(
-                              maxLines: 1,
-                              controller: _firstName,
-                              validator: validateName,
-                              keyboardType: TextInputType.text,
-                              onSaved: (String val) {
-                                fName = val;
-                              },
-                              autofocus: false,
-                              decoration: InputDecoration(
-                                  prefixIcon: Icon(
-                                    Icons.account_circle,
-                                    color: Colors.grey[800],
+                                Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: TextFormField(
+                                    maxLines: 1,
+                                    controller: _firstName,
+                                    validator: validateName,
+                                    keyboardType: TextInputType.text,
+                                    onSaved: (String val) {
+                                      fName = val;
+                                    },
+                                    autofocus: false,
+                                    decoration: InputDecoration(
+                                        prefixIcon: Icon(
+                                          Icons.account_circle,
+                                          color: Colors.grey[800],
+                                        ),
+                                        labelText: 'Enter Full Name'),
                                   ),
-                                  labelText: 'Enter Full Name'),
-                            ),
-                          ),
+                                ),
 //                Padding(
 //                  padding: const EdgeInsets.all(8.0),
 //                  child: TextFormField(
@@ -371,63 +373,63 @@ class _AgentSignUpState extends State<AgentSignUp> {
 //                        labelText: 'Enter your Title'),
 //                  ),
 //                ),
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: TextFormField(
-                              controller: _age,
-                              keyboardType: TextInputType.number,
-                              validator: validateAge,
+                                Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: TextFormField(
+                                    controller: _age,
+                                    keyboardType: TextInputType.number,
+                                    validator: validateAge,
 //                onSaved: (String val) {
 //                  Age = val;
 //                },
-                              maxLines: 1,
-                              autofocus: false,
-                              decoration: InputDecoration(
-                                  prefixIcon: Icon(
-                                    Icons.invert_colors,
-                                    color: Colors.grey[800],
+                                    maxLines: 1,
+                                    autofocus: false,
+                                    decoration: InputDecoration(
+                                        prefixIcon: Icon(
+                                          Icons.invert_colors,
+                                          color: Colors.grey[800],
+                                        ),
+                                        labelText: 'Enter Age:'),
                                   ),
-                                  labelText: 'Enter Age:'),
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: TextFormField(
-                              keyboardType: TextInputType.text,
-                              validator: ValidateLocation,
-                              controller: _location,
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: TextFormField(
+                                    keyboardType: TextInputType.text,
+                                    validator: ValidateLocation,
+                                    controller: _location,
 //                onSaved: (String val) {
 //                  Location = val;
 //                },
-                              maxLines: 1,
-                              autofocus: false,
-                              decoration: InputDecoration(
-                                  prefixIcon: Icon(
-                                    Icons.add_location,
-                                    color: Colors.grey[800],
+                                    maxLines: 1,
+                                    autofocus: false,
+                                    decoration: InputDecoration(
+                                        prefixIcon: Icon(
+                                          Icons.add_location,
+                                          color: Colors.grey[800],
+                                        ),
+                                        labelText: 'Enter Your Address:'),
                                   ),
-                                  labelText: 'Enter Your Address:'),
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: TextFormField(
-                              keyboardType: TextInputType.phone,
-                              validator: validateMobile,
-                              controller: _phoneController,
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: TextFormField(
+                                    keyboardType: TextInputType.phone,
+                                    validator: validateMobile,
+                                    controller: _phoneController,
 //                onSaved: (String val) {
 //                  PhoneNumber = val;
 //                },
-                              maxLines: 1,
-                              autofocus: false,
-                              decoration: InputDecoration(
-                                  prefixIcon: Icon(
-                                    Icons.dialer_sip,
-                                    color: Colors.grey[800],
+                                    maxLines: 1,
+                                    autofocus: false,
+                                    decoration: InputDecoration(
+                                        prefixIcon: Icon(
+                                          Icons.dialer_sip,
+                                          color: Colors.grey[800],
+                                        ),
+                                        labelText: 'Enter Number:'),
                                   ),
-                                  labelText: 'Enter Number:'),
-                            ),
-                          ),
+                                ),
 //                  Padding(
 //                    padding: const EdgeInsets.all(8.0),
 //                    child: TextFormField(
@@ -447,112 +449,117 @@ class _AgentSignUpState extends State<AgentSignUp> {
 //                          labelText: 'Enter Email:'),
 //                    ),
 //                  ),
-                          Container(
-                            //padding: EdgeInsets.only(left: 50, right: 50, bottom: 10),
-                            //color: Colors.grey[200],
-                            child: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Column(
-                                children: <Widget>[
-                                  TextFormField(
-                                    keyboardType: TextInputType.multiline,
-                                    validator: ValidateDescp,
-                                    controller: _description,
+                                Container(
+                                  //padding: EdgeInsets.only(left: 50, right: 50, bottom: 10),
+                                  //color: Colors.grey[200],
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Column(
+                                      children: <Widget>[
+                                        TextFormField(
+                                          keyboardType: TextInputType.multiline,
+                                          validator: ValidateDescp,
+                                          controller: _description,
 //                      onSaved: (String val) {
 //                        Description = val;
 //                      },
-                                    maxLines: 4,
-                                    autofocus: false,
-                                    decoration: InputDecoration(
-                                        prefixIcon: Icon(
-                                          Icons.description,
-                                          color: Colors.grey[800],
+                                          maxLines: 4,
+                                          autofocus: false,
+                                          decoration: InputDecoration(
+                                              prefixIcon: Icon(
+                                                Icons.description,
+                                                color: Colors.grey[800],
+                                              ),
+                                              labelText: 'Your Introduction:'),
+                                          //textAlign: TextAlign,
                                         ),
-                                        labelText: 'Your Introduction:'),
-                                    //textAlign: TextAlign,
-                                  ),
-                                  Container(
-                                    margin: EdgeInsets.only(left: 10, top: 10),
-                                    width: 165,
-                                    child: FlatButton(
-                                      disabledColor: Colors.grey[800],
-                                      onPressed: () async {
-                                        _validate = true;
-                                        var firebaseUser = await FirebaseAuth
-                                            .instance.currentUser();
-                                        if (_sendToServer()) {
-                                          _firestore.collection("agentRequest").document(
-                                              firebaseUser.uid).setData({
-                                            "displayName": _firstName.text,
-                                            "age": _age.text,
-                                            'phoneNumber': _phoneController.text,
-                                            "address": _location.text,
-                                            "description": _description.text,
-                                          });
-                                          Navigator.pop(context);
-                                          _validate = false;
-                                          return true;
-                                        }
+                                        Container(
+                                          margin: EdgeInsets.only(left: 10, top: 10),
+                                          width: 165,
+                                          child: FlatButton(
+                                            disabledColor: Colors.grey[800],
+                                            onPressed: () async {
+                                              _validate = true;
+                                              agent.Name = _firstName.text;
+                                              agent.phoneNumber=_phoneController.text;
+                                              agent.age= _age.text;
+                                              agent.description=_description.text;
+                                              agent.address = _location.text;
+                                              agent.uid = user.uid;
+                                              if (_sendToServer()) {
+                                                AgentDatabase().ApplyForAgent(agent);
+                                                /*_firestore.collection("agentRequest").document(
+                                                    firebaseUser.uid).setData({
+                                                  "displayName": _firstName.text,
+                                                  "age": _age.text,
+                                                  'phoneNumber': _phoneController.text,
+                                                  "address": _location.text,
+                                                  "description": _description.text,
+                                                                 });*/
+                                                Navigator.pop(context);
+                                                _validate = false;
+                                                return true;
+                                              }
 
-                                        Navigator.pop(context);
-                                        //Navigator.pop(context);
-                                        // : print('Error') ?  if(_firstName.text !=null)  : Navigator.pop(context);
+                                              Navigator.pop(context);
+                                              //Navigator.pop(context);
+                                              // : print('Error') ?  if(_firstName.text !=null)  : Navigator.pop(context);
 
-                                        //final navigator = Navigator.of(context);
-                                        //await navigator.pushNamed('/main');
+                                              //final navigator = Navigator.of(context);
+                                              //await navigator.pushNamed('/main');
 
-                                        //_sendToServer();
-                                        //print("${_currentUser.image}");
-                                        // uploadFoodAndImage(File localFile,)
+                                              //_sendToServer();
+                                              //print("${_currentUser.image}");
+                                              // uploadFoodAndImage(File localFile,)
 
-                                        //  Navigator.pushNamed(context, '/main');
+                                              //  Navigator.pushNamed(context, '/main');
 
-                                        //Navigator.pop(context);
-                                      },
-                                      child: Text('Sign Up',
-                                          style: TextStyle(
-                                            color: Colors.black,
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 16,
-                                          )),
-                                      shape: RoundedRectangleBorder(
-                                        side: BorderSide(
-                                            color: Colors.grey[800],
-                                            width: 1.5,
-                                            style: BorderStyle.solid),
-                                      ),
+                                              //Navigator.pop(context);
+                                            },
+                                            child: Text('Sign Up',
+                                                style: TextStyle(
+                                                  color: Colors.black,
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 16,
+                                                )),
+                                            shape: RoundedRectangleBorder(
+                                              side: BorderSide(
+                                                  color: Colors.grey[800],
+                                                  width: 1.5,
+                                                  style: BorderStyle.solid),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+
+                                      // ),
                                     ),
                                   ),
-                                ],
-
-                                // ),
-                              ),
+                                ),
+                              ],
                             ),
                           ),
-                        ],
-                      ),
-                    ),
+                        );
+                      }
                   );
                 }
-            );
-          }
-          else {
-            debugPrint('Loading...');
-            return Center(
-              child: Text('Loading...'),
-            );
+                else {
+                  debugPrint('Loading...');
+                  return Center(
+                    child: Text('Loading...'),
+                  );
 
-        }
-        }
+                }
+              }
           ),
-          );
+        );
       },
-    );
+    ):Container();
   }
 
   uploadFoodAndImage(
-    File localFile,
-  ) async {
+      File localFile,
+      ) async {
     if (localFile != null) {
       print("uploading image");
 

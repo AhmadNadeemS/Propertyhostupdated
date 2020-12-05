@@ -67,42 +67,17 @@ class _EditProfileState extends State<EditProfile> {
 //  }
   final Firestore _firestore = Firestore.instance;
 
-//  Map<String,dynamic> productToAdd;
-//  CollectionReference collectionReference=Firestore.instance.collection('agentRequests');
-//  addProduct(){
-//    productToAdd ={
-//      "firstName" : _firstName.text,
-//      "title" : _title.text,
-//      "age" : _age.text,
-//      "location" : _location.text,
-//      "phoneController" : _phoneController.text,
-////      "emailAddress" : _emailAddress.text,
-//      "description" : _description.text,
-//    };
-//    collectionReference.add(productToAdd).whenComplete(() => print('Added'));
-//  }
-  //final Firestore _firestore = Firestore.instance;
-  //AgentUser _currentUser = AgentUser();
+
   String retVal;
 
-  //  String _uid;
-  //  String _email;
 
   OurUser _currentUser = OurUser();
 
-  //  String _uid;
-  //  String _email;
-  //  String _email;
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
   OurUser get getCurrentUser => _currentUser;
 
-  //bool userLoggedIn =false;
-  Future<FirebaseUser> getUser() {
-    return _auth.currentUser();
-  }
 
-  //FirebaseUser user;
   FirebaseUser user;
 
   @override
@@ -114,6 +89,7 @@ class _EditProfileState extends State<EditProfile> {
 
   initUser() async {
     user = await _auth.currentUser();
+    print(user.uid.toString());
     setState(() {});
   }
 
@@ -131,17 +107,11 @@ class _EditProfileState extends State<EditProfile> {
 //  OurUser get getAgentUser => _currentUser;
   String fName, title, age, location, phoneNumber, email, description;
   final TextEditingController _firstName = TextEditingController();
-  // final TextEditingController _lastName = TextEditingController();
-  //final TextEditingController _title = TextEditingController();
   final TextEditingController _age = TextEditingController();
   final TextEditingController _location = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
-  // final TextEditingController _emailAddress = TextEditingController();
   final TextEditingController _description = TextEditingController();
 
-  //final TextEditingController _passwordTextController = TextEditingController();
-  //final TextEditingController _confirmPasswordController = TextEditingController();
-  //final TextEditingController _role = TextEditingController();
   final scaffoldKey = GlobalKey<ScaffoldState>();
   GlobalKey<FormState> _key = new GlobalKey();
   bool _validate = false;
@@ -481,7 +451,9 @@ class _EditProfileState extends State<EditProfile> {
                                               var firebaseUser = await FirebaseAuth
                                                   .instance.currentUser();
                                               if (_sendToServer()) {
-                                                _firestore.collection("users").document(
+                                                if(snapshot.data.documents.elementAt(index)['User Type']=="Agent"){
+
+                                               await _firestore.collection("users").document(
                                                     firebaseUser.uid).updateData({
                                                   "displayName": _firstName.text,
                                                   "age": _age.text,
@@ -489,27 +461,26 @@ class _EditProfileState extends State<EditProfile> {
                                                   "address": _location.text,
                                                   "description": _description.text,
                                                 });
+
+                                                }else{
+
+                                               await   _firestore.collection("users").document(
+                                                      firebaseUser.uid).updateData({
+                                                    "displayName": _firstName.text,
+                                                    'phoneNumber': _phoneController.text,
+                                                    "address": _location.text,
+                                                    "description": _description.text,
+                                                  });
+                                                }
+
                                                 Navigator.pop(context);
                                                 _validate = false;
                                                 return true;
                                               }
 
                                               Navigator.pop(context);
-                                              //Navigator.pop(context);
-                                              // : print('Error') ?  if(_firstName.text !=null)  : Navigator.pop(context);
-
-                                              //final navigator = Navigator.of(context);
-                                              //await navigator.pushNamed('/main');
-
-                                              //_sendToServer();
-                                              //print("${_currentUser.image}");
-                                              // uploadFoodAndImage(File localFile,)
-
-                                              //  Navigator.pushNamed(context, '/main');
-
-                                              //Navigator.pop(context);
                                             },
-                                            child: Text('Sign Up',
+                                            child: Text('Update',
                                                 style: TextStyle(
                                                   color: Colors.black,
                                                   fontWeight: FontWeight.bold,

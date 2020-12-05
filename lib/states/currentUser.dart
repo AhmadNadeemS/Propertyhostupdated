@@ -49,6 +49,7 @@ class CurrentUser extends ChangeNotifier{
     return retVal;
   }
 
+
   Future<String> onStartUp() async{
     String retVal = "error";
     try{
@@ -145,7 +146,6 @@ class CurrentUser extends ChangeNotifier{
         OurDatabase().createUser(_user);
 
       }
-
 //      _currentUser.uid = _authResult.user.uid;
 //      _currentUser.email = _authResult.user.email;
 
@@ -165,8 +165,6 @@ class CurrentUser extends ChangeNotifier{
     catch(e){
       retVal = e.message;
     }
-
     return retVal;
   }
-
 }

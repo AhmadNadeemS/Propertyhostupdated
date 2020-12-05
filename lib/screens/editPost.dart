@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:multi_image_picker/multi_image_picker.dart';
 import 'package:nice_button/NiceButton.dart';
-import 'package:path/path.dart';
+import 'package:path/path.dart' as path;
 import 'package:signup/models/Adpost.dart';
 import 'package:signup/services/PostAdCreation.dart';
 import '../AppLogic/validation.dart';
@@ -32,6 +32,8 @@ class _EditPostState extends State<EditPost> {
   String _error = 'No Error Dectected';
   bool isUploading = false;
   List<NetworkImage> _listOfImages = <NetworkImage>[];
+
+  AdPost _adPost = new AdPost();
 
   //List<Object> images = List<Object>();
   //Future<File> imageFile;
@@ -349,6 +351,8 @@ class _EditPostState extends State<EditPost> {
               if (_key.currentState.validate()) {
                 _key.currentState.save();
 
+                runMyFutureGetImagesReference();
+
              //   PostAddFirebase().updatePost(String postId,adPost);
               //  showAlert("Post is Uploading. Please Wait ");
                // runMyFutureGetImagesReference();
@@ -376,6 +380,159 @@ class _EditPostState extends State<EditPost> {
 
         ]),
       ),
+    );
+  }
+
+  void runMyFutureGetImagesReference() async{
+
+    List<String> values =  await GetImageReferences();
+
+    print(values.length.toString() + "entered in runMyfuture method");
+
+    if (_selectedpropertyType == "Homes") {
+      if(_selectedpropertyDetailType =="Pent House") {
+        _adPost.title = titleController.text;
+        _adPost.desc = descController.text;
+        _adPost.price = int.parse(priceController.text);
+        _adPost.Address = addressController.text;
+        _adPost.City = cityController.text;
+        _adPost.AvailDays = AvailDays.text;
+        _adPost.time = MetTimeController.text;
+        _adPost.propertySize = propertySize.text;
+        _adPost.unitArea = _selectedUnitArea;
+        _adPost.purpose = _selectedPurpose;
+        _adPost.propertyType = _selectedpropertyType;
+        _adPost.propertyDeatil = _selectedpropertyDetailType;
+        _adPost.ImageUrls = values;
+
+        createpost.updatePostAddHomesPentHouse(_adPost);
+
+
+      } else{
+
+        setState(() {
+          if (buildYear.text.isEmpty || parkingSpace.text.isEmpty ||
+              Rooms.text.isEmpty || BathRooms.text.isEmpty
+              || kitchens.text.isEmpty || Floors.text.isEmpty) {
+            _validate = true;
+          }
+          else {
+            _adPost.title = titleController.text;
+            _adPost.desc = descController.text;
+            _adPost.price = int.parse(priceController.text);
+            _adPost.Address = addressController.text;
+            _adPost.City = cityController.text;
+            _adPost.AvailDays = AvailDays.text;
+            _adPost.time = MetTimeController.text;
+            _adPost.propertySize = propertySize.text;
+            _adPost.unitArea = _selectedUnitArea;
+            _adPost.purpose = _selectedPurpose;
+            _adPost.propertyType = _selectedpropertyType;
+            _adPost.propertyDeatil = _selectedpropertyDetailType;
+            _adPost.buildyear = buildYear.text;
+            _adPost.ParkingSpace = parkingSpace.text;
+            _adPost.Rooms = Rooms.text;
+            _adPost.bathrooms = BathRooms.text;
+            _adPost.Kitchens = kitchens.text;
+            _adPost.Floors = Floors.text;
+            _adPost.ImageUrls = values;
+
+            createpost.updatePostAddHomes(_adPost);
+
+            // print(imageUrls);
+          }
+        });
+      }
+    }
+
+    else if (_selectedpropertyType == "Plots") {
+
+      _adPost.title = titleController.text;
+      _adPost.desc = descController.text;
+      _adPost.price = int.parse(priceController.text);
+      _adPost.Address = addressController.text;
+      _adPost.City = cityController.text;
+      _adPost.AvailDays = AvailDays.text;
+      _adPost.time = MetTimeController.text;
+      _adPost.propertySize = propertySize.text;
+      _adPost.unitArea = _selectedUnitArea;
+      _adPost.purpose = _selectedPurpose;
+      _adPost.propertyType = _selectedpropertyType;
+      _adPost.propertyDeatil = _selectedpropertyDetailType;
+      _adPost.possesion=  _checkBoxVal;
+      _adPost.ParkingSpaces= _checkBoxVal2;
+      _adPost.corners = _checkBoxVal3;
+      _adPost.disputed= _checkBoxVal4;
+      _adPost.balloted= _checkBoxVal5;
+      _adPost.suiGas= _checkBoxVal6;
+      _adPost.waterSupply = _checkBoxVal7;
+      _adPost.sewarge= _checkBoxVal8;
+
+      _adPost.ImageUrls = values;
+      createpost.updatePostAddPlots(_adPost);
+    }
+
+    else {
+      setState(() {
+        if (buildYear.text.isEmpty || parkingSpace.text.isEmpty ||
+            flooring.text.isEmpty || Rooms.text.isEmpty ||
+            Floors.text.isEmpty) {
+          _validate = true;
+        }
+        else {
+          _adPost.title = titleController.text;
+          _adPost.desc = descController.text;
+          _adPost.price = int.parse(priceController.text);
+          _adPost.Address = addressController.text;
+          _adPost.City = cityController.text;
+          _adPost.AvailDays = AvailDays.text;
+          _adPost.time = MetTimeController.text;
+          _adPost.propertySize = propertySize.text;
+          _adPost.unitArea = _selectedUnitArea;
+          _adPost.purpose = _selectedPurpose;
+          _adPost.propertyType = _selectedpropertyType;
+          _adPost.propertyDeatil = _selectedpropertyDetailType;
+          _adPost.buildyear=  buildYear.text;
+          _adPost.ParkingSpace= parkingSpace.text;
+          _adPost.Rooms=   Rooms.text;
+          _adPost.Floors= Floors.text;
+          _adPost.possesion=  _checkBoxVal;
+          _adPost.ParkingSpaces= _checkBoxVal2;
+          _adPost.corners = _checkBoxVal3;
+          _adPost.disputed= _checkBoxVal4;
+          _adPost.ImageUrls = values;
+          createpost.updatePostAddCommerical(_adPost);
+        }
+      });
+    }
+
+    showAlert("uploaded successfully");
+    Navigator.pop(this.context);
+
+  }
+
+  showAlert(String a) {
+    showDialog(
+      context: this.context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: new Text(a),
+          actions: <Widget>[
+            FlatButton(
+              child: Text(
+                "Ok",
+                style: Theme.of(context).textTheme.caption.copyWith(
+                    fontWeight: FontWeight.w600,
+                    color: Colors.blue
+                ),
+              ),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
     );
   }
 
