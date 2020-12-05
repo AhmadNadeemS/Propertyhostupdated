@@ -450,7 +450,7 @@ class _UserDetail extends State<UserDetail> {
                 ),
               ),
               Container(
-                margin: EdgeInsets.only(top: 30),
+                margin: EdgeInsets.only(top: 29),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
